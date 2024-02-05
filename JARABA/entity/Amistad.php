@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity] 
 #[ORM\Table(name: 'amistad')]
-class Comentario 
+class Amistad 
 {
 	#[ORM\Id]
     #[ORM\Column(type:'integer', name:'IdUsusario1')]
