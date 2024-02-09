@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perfil de {{ usuario.nombre }}</title>
+</head>
+<body>
+    <div>
+        <h1>Perfil de {{ usuario.nombre }}</h1>
+        <div>
+            <p>Nombre: {{ usuario.nombre }}</p>
+            <p>Correo: {{ usuario.correo }}</p>
+            <p>Localidad: {{ usuario.localidad }}</p>
+            <p>Fecha de Nacimiento: {{ usuario.fechaNacimiento ? usuario.fechaNacimiento|date('Y-m-d') : 'N/A' }}</p>
+            <p>Otros datos: {{ usuario.datosAdicionales }}</p>
+        </div>
+    </div>
+</body>
+</html>
