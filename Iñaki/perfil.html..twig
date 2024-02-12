@@ -1,17 +1,20 @@
+<- Actualizado 12/02: Adaptado para que este archivo muestre el perfil del usuario
+ y en el perfil de otro usuario que sea buscado en el buscador->
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Perfil de {{ usuario.nombre }}</title>
+    <title>Perfil de {{ usuario.NOMBRE_USUARIO }}</title>
 </head>
 <body>
     <div>
-        <h1>Perfil de {{ usuario.nombre }}</h1>
+        <h1>Perfil de {{ usuario.NOMBRE_USUARIO }}</h1>
         <div>
-            <p>Nombre: {{ usuario.nombre }}</p>
-            <p>Correo: {{ usuario.correo }}</p>
-            <p>Localidad: {{ usuario.localidad }}</p>
-            <p>Fecha de Nacimiento: {{ usuario.fechaNacimiento ? usuario.fechaNacimiento|date('Y-m-d') : 'N/A' }}</p>
-            <p>Otros datos: {{ usuario.datosAdicionales }}</p>
+            <p>Nombre: {{ usuario.NOMBRE_USUARIO }}</p>
+            <p>Correo: {{ usuario.CORREO.USUARIO }}</p>
+            <p>Localidad: {{ usuario.Localidad }}</p>
+            <p>Fecha de Nacimiento: {{ usuario.FechaNacimiento|date('Y-m-d') : 'No Indicada' }}</p>
+            <p>Otros datos: {{ usuario.DatosExtra }}</p>
         </div>
     </div>
 </body>
