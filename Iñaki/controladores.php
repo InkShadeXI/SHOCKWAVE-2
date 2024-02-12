@@ -1,3 +1,5 @@
+<-Actualizado 12/02: Adaptado para ver perfiles de más usuarios->
+
 <?php
 
     namespace App\Controller;
@@ -14,7 +16,7 @@
         return $this->render('registro.html.twig');
     }
 
-        #[Route('/perfil', name: 'perfil')]
+        #[Route('/perfil/{ID_USUARIO}', name: 'perfil')]
         public function mostrarPerfil(EntityManagerInterface $entityManager,$id): Response
         {
             $usuario = $entityManager->getRepository(Usuario::class)->find($id);
