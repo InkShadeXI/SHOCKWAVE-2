@@ -1,0 +1,9 @@
+{% if app.user is not null %}
+    Usuario: {{ app.user.correo_usuario }}
+    <a href="{{ path('categorias') }}">Home</a>
+    <a href="{{ path('carrito') }}">Carrito</a>
+    <a href="{{ path('ctrl_logout') }}">Cerrar sesión</a>
+{% else %}
+    <!-- El usuario no está autenticado, puedes mostrar un enlace para iniciar sesión u otra información relevante -->
+    <a href="{{ path('procesar_login') }}">Iniciar sesión</a>
+{% endif %}
