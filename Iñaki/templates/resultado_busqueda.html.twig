@@ -1,0 +1,16 @@
+{% if usuarios is not empty %}
+    <ul>
+        {% for usuario in usuarios %}
+            <li>
+                <a href="{{ path('ver_perfil', { 'id': usuario.id }) }}">
+                    <div>
+                        {{ usuario.nombre }}
+                        <img src="{{ asset('uploads/' ~ usuario.foto) }}" alt="Foto de perfil">
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <h3>No se encontraron usuarios</h3>
+{% endif %}
