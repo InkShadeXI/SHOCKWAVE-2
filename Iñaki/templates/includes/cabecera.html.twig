@@ -12,4 +12,23 @@
         <input type="text" name="q" placeholder="Buscar usuarios">
         <div id="resultado_busqueda"></div>
     </form>
+    
+    {# Script para AJAX para el buscador #}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#formulario-busqueda').submit(function(e) {
+                e.preventDefault(); // Evita que se envíe el formulario normalmente
+
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ path('buscar_usuarios') }}',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#resultado-busqueda').html(response);
+                    }
+                });
+            });
+        });
+    </script>
 </header>
