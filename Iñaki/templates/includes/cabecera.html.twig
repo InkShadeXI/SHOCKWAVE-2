@@ -1,0 +1,15 @@
+<header>
+    <nav>
+        <ul>
+            <li><a href="{{ path('inicio') }}">Inicio</a></li>
+            <li><a href="{{ path('usuarios')}}">Usuarios</a></li>
+            <li><a href="{{ path('perfil') }}">Perfil</a></li>
+            <li><a href="{{ path('amistades_pendientes') }}">Amistades Pendientes</a></li>
+            <li><a href="{{ path('cerrar_sesion') }}">Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+    <form id="buscador">
+        <input type="text" name="q" placeholder="Buscar usuarios">
+        <div id="resultado_busqueda"></div>
+    </form>
+</header>
