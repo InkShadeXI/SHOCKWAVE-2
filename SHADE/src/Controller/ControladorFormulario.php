@@ -24,13 +24,7 @@ class ControladorFormulario extends AbstractController
         // obtener el error de inicio de sesión (si lo hay)
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        $nombre = $request->request->get('nombre');
-        $password = $request->request->get('password');
-
-        // Buscar el usuario por nombre
-        $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['nombre_usuario' => $nombre]);
-
-        if (!$usuario) {
+        if (!$lastUsername) {
             // Usuario no encontrado
             return $this->render('error_login.html.twig', [
                 'error' => "Este usuario no existe :("
@@ -38,11 +32,9 @@ class ControladorFormulario extends AbstractController
         }
 
         // Comparar la contraseña
-        if ($usuario->getPassword() == $password) {
+        if (!$error) {
             // Contraseña correcta
-            return $this->render('home.html.twig', [
-                'nombre' => $nombre
-            ]);
+            return $this->render('home.html.twig');
         } else {
             // Contraseña incorrecta
             return $this->render('error_login.html.twig', [
@@ -50,4 +42,10 @@ class ControladorFormulario extends AbstractController
             ]);
         }
     }
+
+    #[Route('/logout', name:'app_logout')]
+    public function logout()
+    {
+        return null;
+    } 
 }
