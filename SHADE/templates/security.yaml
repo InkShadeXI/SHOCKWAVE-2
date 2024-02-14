@@ -1,0 +1,23 @@
+security:
+    providers:
+        redsocial:
+            entity:
+                class: App\Entity\Usuario
+                property: nombre_usuario
+    password_hashers:
+        App\Entity\Usuario:
+            algorithm: plaintext
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: redsocial
+            form_login:
+                login_path: log
+                check_path: procesar_login
+                default_target_path: home
+            logout:
+                path:   app_logout
+                target: log    
