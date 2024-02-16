@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 // ===== MUCHO CUIDADO, si no incluyes la entidad y el componente Doctrine, no funcionará =====
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Usuario;
+use App\Entity\Amistad;
+use App\Entity\PostUsuario;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -31,26 +33,37 @@ class ControladorHome extends AbstractController {
         $idUsuario = $usuario->getIdUsuario();
         $nombreUsuario = $usuario->getNombreUsuario();
 
-         // Obtén los IDs de los amigos del usuario
-         $idsAmigos = $entityManager->createQueryBuilder()
-         ->select('a.usuario1', 'a.usuario2')
-         ->from(Amistad::class, 'a')
-         ->andWhere('a.estado = :estadoAceptado')
-         ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
-         ->setParameter('estadoAceptado', 'Aceptado')
-         ->setParameter('idUsuario', $idUsuario)
-         ->getQuery()
-         ->getArrayResult();
+        // Obtener los ids de los amigos (FUNCIONA)
+        $idsAmigos = $entityManager->createQueryBuilder()
+        ->select('CASE WHEN a.usuario1 = :idUsuario THEN IDENTITY(a.usuario2) ELSE IDENTITY(a.usuario1) END AS idAmigo')
+        ->from(Amistad::class, 'a')
+        ->andWhere('a.estado = :estado') // Aquí usa el nombre correcto de la columna 'Estado'
+        ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
+        ->setParameter('estado', 'Aceptado') // Aquí también usa el nombre correcto de la columna 'Estado'
+        ->setParameter('idUsuario', $idUsuario)
+        ->getQuery()
+        ->getResult();
 
-     $idsAmigos = array_merge(...$idsAmigos); // Fusiona los resultados en un solo array
+        // Transforma los resultados en un array plano de IDs
+        $idsAmigos = array_column($idsAmigos, 'idAmigo');
 
-        // Ahora, $idUsuario contiene el ID del usuario actual autenticado
+        // Añade el ID del usuario actual para incluir también su propio ID
+        $idsAmigos[] = $idUsuario;
+
+        // Obtén los posts de los usuarios amigos
+        $postsAmigos = $entityManager->createQueryBuilder()
+        ->select('p.id, u.nombre_usuario, p.texto_post')
+        ->from(PostUsuario::class, 'p')
+        ->join('p.usuario', 'u')  // Une con la entidad Usuario
+        ->andWhere('p.usuario IN (:idsAmigos)')
+        ->setParameter('idsAmigos', $idsAmigos)
+        ->getQuery()
+        ->getResult();
 
         return $this->render('home.html.twig', [
             'idUsuario' => $idUsuario,
             'nombreUsuario' => $nombreUsuario,
-            'idsAmigos' => $idsAmigos
-            // Otros datos necesarios para la plantilla
+            'postsAmigos' => $postsAmigos
         ]);
     } 
     else {
