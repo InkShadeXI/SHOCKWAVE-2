@@ -1,0 +1,32 @@
+{# templates/home.html.twig #}
+{% include 'cabecera.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/error_login.css') }}">
+</head>
+<body>
+    <form action="{{ path('borrar_usuario') }}" method="post">
+        <div>
+        <input type="text" name="usu_delete" id="usu_delete"><input type="submit" value="borrar usuario">
+       </div>
+    </form>
+
+    <form action="{{ path('borrar_post') }}" method="post">
+        <div>
+         <input type="number" name="post_delete" id="post_delete">
+         <input type="submit" value="borrar post">
+       </div>
+    </form>
+
+    <form action="{{ path('ascender_admin') }}" method="post">
+        <div>
+        <input type="text" name="ascender" id="ascender"><input type="submit" value="Hacer administrador">
+       </div>
+    </form>
+
+</body>
+</html>
