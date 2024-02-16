@@ -1,0 +1,158 @@
+<?php 
+namespace App\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Entity\Usuario;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use PHPMailer\PHPMailer\PHPMailer;
+use Symfony\Component\Mime\Email;
+
+class LoginRedSocial extends AbstractController
+{ 
+
+    #[Route('/login', name:'log')]
+    public function home(){
+        return $this->render('login.html.twig');
+    }
+
+    #[Route('/procesar_login', name:'procesar_login')]
+    public function process(Request $request, EntityManagerInterface $entityManager, AuthenticationUtils $authenticationUtils): Response
+    {
+        // obtener el último nombre de usuario introducido (si hay alguno)
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        // obtener el error de inicio de sesión (si lo hay)
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        if (!$lastUsername) {
+            // Usuario no encontrado
+            return $this->render('error_login.html.twig', [
+                'error' => "Este usuario no existe :("
+            ]);
+        }
+
+        // Comparar la contraseña
+        if (!$error) {
+            // Contraseña correcta
+            return $this->render('home.html.twig');
+        } else {
+            // Contraseña incorrecta
+            return $this->render('error_login.html.twig', [
+                'error' => "Contraseña incorrecta, por favor, inténtalo de nuevo :("
+            ]);
+        }
+    }
+	/*#[Route('/login', name:'ctrl_login')]
+    public function login(EntityManagerInterface $entityManager, Request $request){    
+        if($this->getUser()){
+            $usuario = $entityManager->getRepository(Usuario::class)->findAll();
+           
+            return $this->render("home.html.twig", ['usuario'=>$usuario]);
+        }else{ 
+            if ($request->isMethod('POST')) {
+            $nombre = $request->request->get('_username');
+            $passwd = $request->request->get('_password');
+            $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['NombreUsuario' => $nombre]);
+
+          if($usuario && password_verify($passwd, $usuario->getContraseñaUsuario())){
+            return $this->render('home.html.twig');
+             }else{
+               return $this->render('login.html.twig');
+               echo"Problemita";
+              }
+          }else{
+            return $this->render('login.html.twig');
+            echo"Problema";
+          }
+        }
+    }    */
+	
+	#[Route('/logout', name:'ctrl_logout')]
+    public function logout(){    
+        return $this->render('login.html.twig');
+    }    
+
+    #[Route('/usuario', name:'usuario')]
+    public function mostrarUsuario(EntityManagerInterface $entityManager) {
+        $usuario = $entityManager->getRepository(Usuario::class)->findAll();
+        return $this->render("home.html.twig", ['usuario'=>$usuario]);
+    }
+
+
+    #[Route('/registro', name: 'registro')]
+public function confirmar_correo(MailerInterface $mailer, Request $request)
+{
+    if ($request->isMethod('POST')) {
+        $nombre = $request->request->get('nombre');
+        $correo = $request->request->get('correo');
+        $passwd = $request->request->get('passwd');
+        $localidad = $request->request->get('ciudad');
+        $fechaN = $request->request->get('fechaN'); 
+
+        // Convertir $fechaN al objeto DateTime
+        $fechaNacimiento = \DateTime::createFromFormat('d-m-Y', $fechaN);
+
+        if ($fechaNacimiento === false) {
+            // Manejar el caso en el que la conversión falla
+            throw new \Exception('Error al crear objeto DateTime desde la cadena de fecha proporcionada');
+        }
+        
+        // Formatear la fecha al formato 'Y-m-d'
+        $fechaNacimientoStr = $fechaNacimiento->format('Y-m-d');
+
+        $datos = $request->request->get('datos');
+
+        $email = (new Email())
+            ->from('shockwave@hotmail.com')
+            ->to('destinatario@email.com')
+            ->subject('Correo de confirmación')
+            ->html("<p>Para confirmar el registro, haz click en este <a href='http://localhost:8000/confirmar_correo/{$nombre}/{$correo}/{$passwd}/{$localidad}/{$fechaNacimientoStr}/{$datos}'>enlace</a>.</p>");
+
+        $mailer->send($email);
+    } else {
+        return $this->render('registro.html.twig');
+    }
+
+    return $this->render('login.html.twig');
+}
+
+#[Route('/confirmar_correo/{n}/{c}/{p}/{l}/{f}/{d}', name: 'confirmar_correo')]
+public function registro(Request $request, EntityManagerInterface $entityManager, $n, $c, $p, $l, string $f, $d)
+{
+    $admin = 0;
+
+    $nuevo = new Usuario();
+
+    $nuevo->setNombreUsuario($n);
+    $nuevo->setUsuarioAdmin($admin);
+    $nuevo->setCorreoUsuario($c);
+    $nuevo->setContraseñaUsuario(password_hash($p, PASSWORD_BCRYPT)); 
+    if ($d == null) {
+        $nuevo->setDescripcion(" ");
+    } else {
+        $nuevo->setDescripcion($d);
+    }
+    $nuevo->setLocalidad($l);
+    
+    try {
+        $fechaNacimiento = \DateTime::createFromFormat('Y-m-d', $f);
+
+        $fechaNacimientoStr = $fechaNacimiento->format('Y-m-d');
+
+        $nuevo->setFechaNacimiento($fechaNacimientoStr);
+    } catch (\Exception $e) {
+        echo "Error al procesar la fecha de nacimiento: " . $e->getMessage();
+    }
+
+    $entityManager->persist($nuevo);
+    $entityManager->flush();
+
+    return $this->render('login.html.twig');
+}
+}
