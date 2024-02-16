@@ -1,20 +1,19 @@
-<- Actualizado 12/02: Adaptado para que este archivo muestre el perfil del usuario
- y en el perfil de otro usuario que sea buscado en el buscador->
+<- Actualizado 16/02: El perfil si tiene valores vacios ahora muestra mensajes por defecto->
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Perfil de {{ usuario.NOMBRE_USUARIO }}</title>
+    <title>Perfil de {{ usuario.NombreUsuario }}</title>
 </head>
 <body>
     <div>
-        <h1>Perfil de {{ usuario.NOMBRE_USUARIO }}</h1>
+        <h1>Perfil de {{ usuario.NombreUsuario }}</h1>
         <div>
-            <p>Nombre: {{ usuario.NOMBRE_USUARIO }}</p>
-            <p>Correo: {{ usuario.CORREO.USUARIO }}</p>
-            <p>Localidad: {{ usuario.Localidad }}</p>
-            <p>Fecha de Nacimiento: {{ usuario.FechaNacimiento|date('Y-m-d') : 'No Indicada' }}</p>
-            <p>Otros datos: {{ usuario.DatosExtra }}</p>
+            <p>Nombre: {{ usuario.NombreUsuario }}</p>
+            <p>Correo: {{ usuario.CorreoUsuario }}</p>
+            <p>Localidad: {{ usuario.Localidad ? usuario.Localidad : 'Localidad no indicada'}}</p>
+            <p>Fecha de Nacimiento: {{ usuario.FechaNacimiento ? usuario.FechaNacimiento|date('d-m-Y') : 'Fecha no indicada' }}</p>
+            <p>Otros datos: {{ usuario.Descripcion ? usuario.Descripcion : 'No hay datos de interés'}}</p>
         </div>
     </div>
 </body>
