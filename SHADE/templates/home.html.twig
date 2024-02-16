@@ -6,18 +6,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="{{ asset('CSS/error_login.css') }}">
+    <link rel="stylesheet" href="{{ asset('CSS/home.css') }}">
 </head>
 <body>
-    {{ dump(app.user) }}
-    {% if app.user is not null %}
-    <p>¡Bienvenido de nuevo {{ app.user.nombre_usuario }}!</p>
+    <!-- No autentifica al usuario -->
+    <p>¡Bienvenido de nuevo {{ app.user.getNombreUsuario() }}!</p>
+    <button class="light_dark"><img src="{{ asset('IMG/night.png') }}" class="logo"></button>
+    {% for post in postsAmigos %}
     <div>
-        <h2>Un random ha publicado...</p>
-        <p>Al menos Franco hacía pantanos</p>
+        <form action="{{ path('comentar_post') }}" method="post">
+            <!-- Campo oculto para almacenar el valor del h2 -->
+            <input type="hidden" name="usuario" value="{{ post['nombre_usuario'] }}">
+            <!-- ... otros campos del formulario ... -->
+            <h2>{{ post['nombre_usuario'] }}</h2><h2>&nbsp;ha publicado:</h2><br>
+            <p name="contenido">{{ post['texto_post'] }}</p><br>
+            <table>
+                <tr>
+                    <td><input type="submit" class="button" value="comentar"></input></td>
+                    <td><button class="reaction like"><img src="{{ asset('IMG/like.png') }}" class="simple_img"></button></td>
+                    <td><button class="reaction disslike"><img src="{{ asset('IMG/dislike.png') }}" class="simple_img"></button></td>
+                </tr>
+            </table>
+        </form>
     </div>
-    {% else %}
-    <p>Por alguna razón su usuario no existe.</p>
-    {% endif %}
+    {% endfor %} 
+    <script src = "{{ asset('JS/jquery.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var color = "black";
+            $(".light_dark").click(function () {
+                if (color == "black") {
+                    color = "white";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "black");
+                    $("h2").css("color", "black");
+                    $("p").css("color", "black");
+                    $("div").css("border-color", "black");
+                    $(".button").css("border-color", "black");
+                } else {
+                    color = "black";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "white");
+                    $("h2").css("color", "white");
+                    $("p").css("color", "white");
+                    $("div").css("border-color", "white");
+                    $(".button").css("border-color", "white");
+                }
+            });
+        });
+    </script>
 </body>
 </html>
