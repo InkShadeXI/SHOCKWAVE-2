@@ -31,7 +31,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type:'string', name:'Localidad')]
     private $localidad;
 
-    #[ORM\Column(type: 'date', name: 'FechaNacimiento')]
+    #[ORM\Column(type: 'string', name: 'FechaNacimiento')]
     private $fecha_nacimiento;
 
     #[ORM\Column(type:'boolean', name:'UsuarioAdmin')]
@@ -43,7 +43,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity:'PostUsuario', mappedBy:'usuario')]
     private $postsUsuario;
 
-    #[ORM\OneToMany(targetEntity: "App\Entity\Amistad", mappedBy: "usuario")]
+    #[ORM\OneToMany(targetEntity: "Amistad", mappedBy: "usuario")]
     private $amistades;
 
     public function __construct()
@@ -51,82 +51,84 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
        $this->amistades = new ArrayCollection();
     }
 
-    public function getUsuarioAdmin(): bool
+    public function getUsuarioAdmin()
     {
        return $this->admin;
     }
 
-    public function setUsuarioAdmin(bool $admin): void
+    public function setUsuarioAdmin( $admin)
     {
         $this->admin = $admin;
     }
 
-    public function getIdUsuario(): ?int
+    public function getIdUsuario()
     {
         return $this->id_usuario;
     }
 
-    public function setIdUsuario(int $id_usuario): void
+    public function setIdUsuario( $id_usuario)
     {
         $this->id_usuario = $id_usuario;
     }
 
-    public function getNombreUsuario(): ?string
+    public function getNombreUsuario()
     {
         return $this->nombre_usuario;
     }
 
-    public function setNombreUsuario(string $nombre_usuario): void
+    public function setNombreUsuario( $nombre_usuario)
     {
         $this->nombre_usuario = $nombre_usuario;
     }
 
-    public function getCorreoUsuario(): ?string
+    public function getCorreoUsuario()
     {
         return $this->correo_usuario;
     }
 
-    public function setCorreoUsuario(string $correo_usuario): void
+    public function setCorreoUsuario( $correo_usuario)
     {
         $this->correo_usuario = $correo_usuario;
     }
 
-    public function getContraseñaUsuario(): ?string
+    public function getContraseñaUsuario()
     {
         return $this->contraseña_usuario;
     }
 
-    public function setContraseñaUsuario(string $contraseña_usuario): void
+    public function setContraseñaUsuario( $contraseña_usuario)
     {
         $this->contraseña_usuario = $contraseña_usuario;
+
+        return $this;
     }
 
-    public function getDescripcion(): ?string
+    public function getDescripcion()
     {
         return $this->descripcion;
     }
 
-    public function setDescripcion(string $descripcion): void
+    public function setDescripcion( $descripcion)
     {
         $this->descripcion = $descripcion;
     }
 
-    public function getLocalidad(): ?string
+    public function getLocalidad()
     {
         return $this->localidad;
     }
 
-    public function setLocalidad(string $localidad): void
+    public function setLocalidad( $localidad)
     {
         $this->localidad = $localidad;
     }
 
-    public function getFechaNacimiento(): ?\DateTimeInterface
+    public function getFechaNacimiento()
     {
         return $this->fecha_nacimiento;
     }
 
-    public function setFechaNacimiento(\DateTimeInterface $fecha_nacimiento): void
+    public function setFechaNacimiento( $fecha_nacimiento)
     {
         $this->fecha_nacimiento = $fecha_nacimiento;
     }
@@ -136,7 +138,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->comentarios;
     }
 
-    public function setComentarios(ArrayCollection $comentarios): void
+    public function setComentarios(ArrayCollection $comentarios)
     {
         $this->comentarios = $comentarios;
     }
@@ -146,7 +148,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->postsUsuario;
     }
 
-    public function setPostsUsuario(ArrayCollection $postsUsuario): void
+    public function setPostsUsuario(ArrayCollection $postsUsuario)
     {
         $this->postsUsuario = $postsUsuario;
     }
@@ -156,7 +158,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->amistades;
     }
 
-    public function setAmistades(ArrayCollection $amistades): void
+    public function setAmistades(ArrayCollection $amistades)
     {
         $this->amistades = $amistades;
     }
