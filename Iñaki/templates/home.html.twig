@@ -1,0 +1,21 @@
+{% include 'includes/cabecera.html.twig' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/error_login.css') }}">
+</head>
+<body>
+    {% if app.user is not null %}
+    <p>¡Bienvenido de nuevo {{ app.user.NombreUsuario }}!</p>
+    <div>
+        <h2>Un random ha publicado...</p>
+        <p>Texto de prueba</p>
+    </div>
+    {% else %}
+    <p>Por alguna razón su usuario no existe.</p>
+    {% endif %}
+</body>
+</html>
