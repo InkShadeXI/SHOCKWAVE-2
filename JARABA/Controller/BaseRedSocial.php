@@ -7,10 +7,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use PHPMailer\PHPMailer\PHPMailer;
+use Symfony\Component\Mime\Email;
 use App\Entity\Usuario;
 use App\Entity\PostUsuario;
 use App\Entity\Comentario;
 use App\Entity\Amistad;
+use Exception;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
@@ -76,7 +81,7 @@ class BaseRedSocial extends AbstractController
     $entityManager->persist($solicitud);
     $entityManager->flush();
 
-    return $this->redirectToRoute('amistad');
+    return $this->render('home.html.twig');
 }
 
     #[Route('/aceptar_solicitud/{id}', name: 'aceptar_solicitud_amistad')]
@@ -110,17 +115,7 @@ class BaseRedSocial extends AbstractController
     }
 
 
-    #[Route('/perfil', name: 'perfil')]
-    public function mostrarPerfil(EntityManagerInterface $entityManager,$id): Response
-    {
-        $usuario = $entityManager->getRepository(Usuario::class)->find($id);
-
-        if (!$usuario) {
-            throw $this->createNotFoundException('No se encontró el usuario.');
-        }
-        return $this->render('perfil.html.twig', ['usuario' => $usuario,]);
-    }
-
+// Apartir de aqui es codigo de la zona admin
 
     #[Route('/zona_admin', name: 'zona_admin')]
     public function ZonaAdmin(EntityManagerInterface $entityManager): Response
@@ -203,4 +198,156 @@ class BaseRedSocial extends AbstractController
                 return $this->render('home.html.twig');
             }
         }
+
+// codigo de perfil
+
+#[Route('/perfil/{id}', name: 'perfil')]
+public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Response
+{
+    $usuarioActual = $this->getUser();
+    $usuarioPerfil = $entityManager->getRepository(Usuario::class)->find($id);
+
+    if (!$usuarioPerfil) {
+        throw $this->createNotFoundException('No se encontró el usuario.');
+    }
+
+    // Verificar si ya son amigos
+    $amistad = $entityManager->getRepository(Amistad::class)->findOneBy([
+        'usuario1' => $usuarioActual,
+        'usuario2' => $usuarioPerfil,
+        'estado' => 'aceptada'
+    ]);
+
+    $puedeEnviarSolicitud = true; // Por defecto, permitir enviar solicitud de amistad
+
+    if ($amistad) {
+        $puedeEnviarSolicitud = false; // Si ya son amigos, no permitir enviar solicitud
+    }
+
+    return $this->render('perfil.html.twig', [
+        'usuario' => $usuarioPerfil,
+        'puedeEnviarSolicitud' => $puedeEnviarSolicitud
+    ]);
+}
+
+    
+        #[Route('/buscar-usuarios', name: 'buscar_usuarios', methods: ('GET'))]
+        
+        public function buscarUsuarios(Request $request): Response
+        {
+            $query = $request->query->get('q');
+
+            $usuarios = $this->getDoctrine()->getRepository(User::class)->buscarPorNombreOEmail($query);
+
+            return $this->render('includes/resultado_busqueda.html.twig', ['usuarios' => $usuarios,]);
+        }
+
+        #[Route('/comentar_post', name:'comentar_post')]
+        public function comentar (Request $request): Response {
+            $nombre_usuario = $request->request->get("usuario");
+            return $this->render('comentario.html.twig', ["usuario_destino" => $nombre_usuario]);
+        }
+    
+        #[Route('/procesar_comentario', name:'procesar_comentario')]
+        public function procesar_comentario (Request $request): Response {
+            $usuario_receptor = $request->request->get("nombre_usuario");
+            $mensaje = $request->request->get("comentario");
+            return $this->render('error_login.html.twig', ["error" => $usuario_receptor . " ha comentado " . $mensaje]);
+        }
+
+
+// home
+
+        #[Route('/home', name:'home')]
+    public function process(Request $request, EntityManagerInterface $entityManager): Response {
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+    // Obtén el usuario actualmente autenticado
+    $usuario = $this->getUser();
+
+    // Dentro de tu controlador
+    dump($usuario);
+
+    // Verifica si el usuario está autenticado
+    if ($usuario) {
+        // Obtén el ID del usuario actual
+        $idUsuario = $usuario->getIdUsuario();
+        $nombreUsuario = $usuario->getNombreUsuario();
+
+         // Obtén los IDs de los amigos del usuario
+         $idsAmigos = $entityManager->createQueryBuilder()
+         ->select('a.usuario1', 'a.usuario2')
+         ->from(Amistad::class, 'a')
+         ->andWhere('a.estado = :estadoAceptado')
+         ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
+         ->setParameter('Estado', 'Aceptado')
+         ->setParameter('idUsuario', $idUsuario)
+         ->getQuery()
+         ->getArrayResult();
+
+     $idsAmigos = array_merge(...$idsAmigos); // Fusiona los resultados en un solo array
+
+        // Ahora, $idUsuario contiene el ID del usuario actual autenticado
+
+        return $this->render('home.html.twig', [
+            'idUsuario' => $idUsuario,
+            'nombreUsuario' => $nombreUsuario,
+            'idsAmigos' => $idsAmigos
+            // Otros datos necesarios para la plantilla
+        ]);
+    } 
+    else {
+        throw $this->createAccessDeniedException('No estás autenticado.');
+    }
+    }
+
+
+// codigo de borrar el correo
+
+    #[Route('/correo_borrado', name:'correo_borrado')]
+    public function CorreoBorrado(MailerInterface $mailer, Request $request): Response {
+        $confirmacion = $request->request->get('confirmar');
+        if ($request->isMethod('POST')) {
+            $usuarioActual = $this->getUser();
+            $id_usuario = $usuarioActual->getIdUsuario();
+            if(isset($confirmacion)){
+                $confirmacion = true;
+                $email = (new Email())
+                ->from('shockwave@hotmail.com')
+                ->to('destinatario@email.com')
+                ->subject('Correo de confirmación')
+                ->html("<p>Para confirmar el borrado de la cuenta, haz click en este <a href='http://localhost:8000/borrar_cuenta/{$confirmacion}/{$id_usuario}'>enlace</a>.</p><br><p>Recuerda que se borrara todo lo relacionado a ti</p>");
+    
+            $mailer->send($email);
+            }
+        } else {
+            return $this->render('registro.html.twig');
+        }
+    
+        return $this->render('login.html.twig');
+    }
+
+
+    #[Route('/borrar_cuenta/{c}/{id_usuario}', name: 'borrar_cuenta')]
+    public function borrarCuenta(EntityManagerInterface $entityManager, bool $c, $id_usuario): Response 
+    {   
+        try {
+            if ($c) {
+                $usuario = $entityManager->getRepository(Usuario::class)->find($id_usuario);
+                
+                if ($usuario) {
+                    $entityManager->remove($usuario);
+                    $entityManager->flush();
+                }
+                
+                return $this->redirectToRoute('ctrl_logout');
+            } else {
+                return $this->redirectToRoute('ctrl_logout');
+            }
+        } catch (\Exception $e) {
+            return $this->redirectToRoute('ctrl_logout');
+        }
+    }
+
+
 }
