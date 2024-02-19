@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    div{
+        border:1px solid black;
+    }
+    </style>
+</head>
+<body>
+    <div>
+        <div>
+            <form action="{{ path('correo_contraseña') }}" method="POST" onsubmit="return validarFormulario(event)">
+                <input type="text" name="correo">
+                <input type="submit" value="Enviar">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
