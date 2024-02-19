@@ -48,30 +48,6 @@ class LoginRedSocial extends AbstractController
             ]);
         }
     }
-	/*#[Route('/login', name:'ctrl_login')]
-    public function login(EntityManagerInterface $entityManager, Request $request){    
-        if($this->getUser()){
-            $usuario = $entityManager->getRepository(Usuario::class)->findAll();
-           
-            return $this->render("home.html.twig", ['usuario'=>$usuario]);
-        }else{ 
-            if ($request->isMethod('POST')) {
-            $nombre = $request->request->get('_username');
-            $passwd = $request->request->get('_password');
-            $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['NombreUsuario' => $nombre]);
-
-          if($usuario && password_verify($passwd, $usuario->getContraseñaUsuario())){
-            return $this->render('home.html.twig');
-             }else{
-               return $this->render('login.html.twig');
-               echo"Problemita";
-              }
-          }else{
-            return $this->render('login.html.twig');
-            echo"Problema";
-          }
-        }
-    }    */
 	
 	#[Route('/logout', name:'ctrl_logout')]
     public function logout(){    
@@ -86,44 +62,47 @@ class LoginRedSocial extends AbstractController
 
 
     #[Route('/registro', name: 'registro')]
-public function confirmar_correo(MailerInterface $mailer, Request $request)
-{
-    if ($request->isMethod('POST')) {
-        $nombre = $request->request->get('nombre');
-        $correo = $request->request->get('correo');
-        $passwd = $request->request->get('passwd');
-        $localidad = $request->request->get('ciudad');
-        $fechaN = $request->request->get('fechaN'); 
-
-        // Convertir $fechaN al objeto DateTime
-        $fechaNacimiento = \DateTime::createFromFormat('d-m-Y', $fechaN);
-
-        if ($fechaNacimiento === false) {
-            // Manejar el caso en el que la conversión falla
-            throw new \Exception('Error al crear objeto DateTime desde la cadena de fecha proporcionada');
+    public function registro(MailerInterface $mailer, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $nombre = $request->request->get('nombre');
+            $correo = $request->request->get('correo');
+            $passwd = $request->request->get('passwd');
+            $localidad = $request->request->get('ciudad');
+            $datos = $request->request->get('datos');
+            if($datos == null){
+                $datos = "Sin informacion";
+            }
+    
+            $fechaN = $request->request->get('fechaN'); 
+            // Si la fecha de nacimiento es nula, establecerla en la fecha actual
+            if($fechaN == null){
+                $fechaN = new \DateTime(); // Fecha de hoy
+                $fechaN->modify('-1 day'); // Restar un día
+            } else {
+                $fechaNacimiento = \DateTime::createFromFormat('d-m-Y', $fechaN);
+                if ($fechaNacimiento instanceof \DateTime) {
+                    $fechaN = $fechaNacimiento;
+                } 
+            
+            }
+    
+            $email = (new Email())
+                ->from('shockwave@hotmail.com')
+                ->to('destinatario@email.com')
+                ->subject('Correo de confirmación')
+                ->html("<p>Para confirmar el registro, haz click en este <a href='http://localhost:8000/confirmar_correo/{$nombre}/{$correo}/{$passwd}/{$localidad}/{$fechaN->format('Y-m-d')}/{$datos}'>enlace</a>.</p>");
+    
+            $mailer->send($email);
+        } else {
+            return $this->render('registro.html.twig');
         }
-        
-        // Formatear la fecha al formato 'Y-m-d'
-        $fechaNacimientoStr = $fechaNacimiento->format('Y-m-d');
-
-        $datos = $request->request->get('datos');
-
-        $email = (new Email())
-            ->from('shockwave@hotmail.com')
-            ->to('destinatario@email.com')
-            ->subject('Correo de confirmación')
-            ->html("<p>Para confirmar el registro, haz click en este <a href='http://localhost:8000/confirmar_correo/{$nombre}/{$correo}/{$passwd}/{$localidad}/{$fechaNacimientoStr}/{$datos}'>enlace</a>.</p>");
-
-        $mailer->send($email);
-    } else {
-        return $this->render('registro.html.twig');
+    
+        return $this->render('login.html.twig');
     }
 
-    return $this->render('login.html.twig');
-}
-
 #[Route('/confirmar_correo/{n}/{c}/{p}/{l}/{f}/{d}', name: 'confirmar_correo')]
-public function registro(Request $request, EntityManagerInterface $entityManager, $n, $c, $p, $l, string $f, $d)
+public function confirmar_correo(Request $request, EntityManagerInterface $entityManager, $n, $c, $p, $l, string $f, $d)
 {
     $admin = 0;
 
@@ -153,6 +132,46 @@ public function registro(Request $request, EntityManagerInterface $entityManager
     $entityManager->persist($nuevo);
     $entityManager->flush();
 
+    return $this->redirectToRoute('log');}
+
+    #[Route('/correo_contraseña', name: 'correo_contraseña')]
+public function correoContraseña(MailerInterface $mailer, Request $request): Response 
+{
+    if ($request->isMethod('POST')) {
+        $correo = $request->request->get('correo');
+        
+        if ($correo) {
+            $email = (new Email())
+                ->from('shockwave@hotmail.com')
+                ->to($correo)
+                ->subject('Correo de recuperación de contraseña')
+                ->html("<p>Para cambiar la contraseña, haz click en este <a href='http://localhost:8000/recuperar_contraseña/{$correo}'>enlace</a>.</p>");
+    
+            $mailer->send($email);
+        }
+    } else {
+        return $this->render('correo_contrasena.html.twig');
+    }
+    
     return $this->render('login.html.twig');
+}
+
+#[Route('/recuperar_contraseña/{correo}', name: 'recuperar_contraseña')]
+public function recuperarContraseña(EntityManagerInterface $entityManager, Request $request, $correo): Response 
+{   
+    if ($request->isMethod('POST')) {
+        $passw = $request->request->get('passw');
+        
+        $usuario = $entityManager->getRepository(Usuario::class)->findOneBy(['correo_usuario' => $correo]);
+        
+        if ($usuario) {
+            $usuario->setContraseñaUsuario(password_hash($passw, PASSWORD_BCRYPT));
+            $entityManager->flush();
+            
+            return $this->redirectToRoute('log');
+        }
+    }
+    
+    return $this->render('recuperar_contraseña.html.twig', ["correo" => $correo]);
 }
 }
