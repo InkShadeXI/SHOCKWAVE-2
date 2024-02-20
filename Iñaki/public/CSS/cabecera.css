@@ -1,0 +1,65 @@
+nav {
+    position: fixed; 
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    left: 0;
+    margin-bottom: 25px
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.enlaces_nav:hover {
+    background-color: green;
+}
+
+#perfil {
+    pointer-events: none;
+}
+
+#perfil:hover {
+    background-color: transparent !important;
+}
+
+li form {
+    margin-top: 7.5%;
+}
+
+li p {
+    display: block;
+    color: green;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 2.5%;
+}
+
+#resultado_busqueda {
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    z-index: 1;
+    display: none;
+}
+
+#buscador-container {
+    float: right;
+    margin-right: 2%;
+}
