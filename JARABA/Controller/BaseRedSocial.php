@@ -229,18 +229,27 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
         'puedeEnviarSolicitud' => $puedeEnviarSolicitud
     ]);
 }
-
-    
-        #[Route('/buscar-usuarios', name: 'buscar_usuarios', methods: ('GET'))]
-        
-        public function buscarUsuarios(Request $request): Response
+        #[Route('/usuarios', name:'usuarios')]
+        public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $request): JsonResponse
         {
-            $query = $request->query->get('q');
-
-            $usuarios = $this->getDoctrine()->getRepository(User::class)->buscarPorNombreOEmail($query);
-
-            return $this->render('includes/resultado_busqueda.html.twig', ['usuarios' => $usuarios,]);
+            if ($request->isMethod('GET')) {
+                $query = $request->query->get('q');
+        
+                $usuarios = $entityManager->createQueryBuilder()
+                    ->select('u.nombre_usuario', 'u.correo_usuario', 'u.localidad', 'u.id_usuario')
+                    ->from(Usuario::class, 'u')
+                    ->andWhere('u.nombre_usuario LIKE :letra')
+                    ->setParameter('letra', '%' . $query . '%')
+                    ->getQuery()
+                    ->getArrayResult();
+        
+                return new JsonResponse($usuarios);
+            } else {
+                $usuarios = $entityManager->getRepository(Usuario::class)->findAll();
+                return new JsonResponse($usuarios);
+            }
         }
+        
 
         #[Route('/comentar_post', name:'comentar_post')]
         public function comentar (Request $request): Response {
@@ -261,39 +270,30 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
         #[Route('/home', name:'home')]
     public function process(Request $request, EntityManagerInterface $entityManager): Response {
     $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-    // Obtén el usuario actualmente autenticado
     $usuario = $this->getUser();
 
-    // Dentro de tu controlador
     dump($usuario);
 
-    // Verifica si el usuario está autenticado
     if ($usuario) {
-        // Obtén el ID del usuario actual
         $idUsuario = $usuario->getIdUsuario();
         $nombreUsuario = $usuario->getNombreUsuario();
 
-         // Obtén los IDs de los amigos del usuario
          $idsAmigos = $entityManager->createQueryBuilder()
          ->select('a.usuario1', 'a.usuario2')
          ->from(Amistad::class, 'a')
          ->andWhere('a.estado = :estadoAceptado')
-         ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
-         ->setParameter('Estado', 'Aceptado')
-         ->setParameter('idUsuario', $idUsuario)
+         ->andWhere('a.usuario1 = :id_usuario OR a.usuario2 = :id_usuario')
+         ->setParameter('estadoAceptado', 'Aceptado')
+         ->setParameter('id_usuario', $idUsuario)
          ->getQuery()
          ->getArrayResult();
 
-     $idsAmigos = array_merge(...$idsAmigos); // Fusiona los resultados en un solo array
-
-        // Ahora, $idUsuario contiene el ID del usuario actual autenticado
+     $idsAmigos = array_merge(...$idsAmigos); 
 
         return $this->render('home.html.twig', [
-            'idUsuario' => $idUsuario,
+            'id_usuario' => $idUsuario,
             'nombreUsuario' => $nombreUsuario,
             'idsAmigos' => $idsAmigos
-            // Otros datos necesarios para la plantilla
         ]);
     } 
     else {
