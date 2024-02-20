@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="{{ asset('CSS/usuarios.css') }}">
+
+{% include 'includes/cabecera.html.twig' %}
+    <div class="separador-cabecera"></div>
+        <div id="perfiles">
+            {% for usuario in usuario %}
+                <a href="{{ path('perfil', { 'id': usuario.IdUsuario }) }}">
+                    <div class="usuario">
+                        <h3>{{ usuario.NombreUsuario }}</h3>
+                        <p>Email: {{ usuario.CorreoUsuario }}</p>
+                        <p>Localidad: {{ usuario.Localidad ? usuario.Localidad : 'Localidad no indicada'}}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
