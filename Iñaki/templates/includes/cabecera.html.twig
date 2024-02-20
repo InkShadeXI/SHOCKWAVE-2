@@ -1,20 +1,29 @@
+<link rel="stylesheet" href="{{ asset('CSS/cabecera.css') }}">
 <header>
     <nav>
         <ul>
-            <li><a href="{{ path('inicio') }}">Inicio</a></li>
-            <li><a href="{{ path('usuarios')}}">Usuarios</a></li>
-            <li><a href="{{ path('perfil') }}">Perfil</a></li>
-            <li><a href="{{ path('amistades_pendientes') }}">Amistades Pendientes</a></li>
-            <li><a href="{{ path('cerrar_sesion') }}">Cerrar Sesión</a></li>
+            {% if app.User is not null %}
+                <li><a id="nombre">Bienvenido: {{app.User.NombreUsuario}}</a></li>
+            {% endif %}
+            <li><a href="{{ path('home') }}" class="enlaces_nav">Inicio</a></li>
+            <li><a href="{{ path('usuarios')}}" class="enlaces_nav">Usuarios</a></li>
+            {% if app.User is not null %}
+                <li><a href="{{ path('perfil',{'id': app.User.IdUsuario}) }}" class="enlaces_nav">Perfil</a></li>
+            {% endif %}
+            {# <li><a href="{{ path('amistades_pendientes') }}">Amistades Pendientes</a></li> #}
+            <li id="buscador-container">
+                <form id="buscador">
+                    <input type="text" name="q" placeholder="Buscar usuarios" id="formulario-busqueda">
+                    <div id="resultado_busqueda"></div>
+                </form>
+            </li>
+            <li><a href="{{ path('app_logout') }}" class="enlaces_nav" id="buscador">Cerrar Sesión</a></li>
         </ul>
     </nav>
-    <form id="buscador">
-        <input type="text" name="q" placeholder="Buscar usuarios">
-        <div id="resultado_busqueda"></div>
-    </form>
+    
     
     {# Script para AJAX para el buscador #}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {# <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#formulario-busqueda').submit(function(e) {
@@ -25,10 +34,16 @@
                     url: '{{ path('buscar_usuarios') }}',
                     data: $(this).serialize(),
                     success: function(response) {
-                        $('#resultado-busqueda').html(response);
+                        // Limpiar resultados anteriores
+                        $('#resultado_busqueda').empty();
+
+                        // Mostrar resultados
+                        $.each(response, function(index, usuario) {
+                            $('#resultado_busqueda').append('<div><a href="{{ path('perfil', {'id': usuario.id}) }}">{{ usuario.nombre }}</a></div>');
+                        });
                     }
                 });
             });
         });
-    </script>
+    </script> #}
 </header>
