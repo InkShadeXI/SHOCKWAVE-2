@@ -17,8 +17,13 @@
     class controladores extends AbstractController{
 
         #[Route('/login', name:'log')]
-    public function home(){
+    public function login(){
         return $this->render('login.html.twig');
+    }
+
+        #[Route('/home', name:'home')]
+    public function home(){
+        return $this->render('home.html.twig');
     }
 
     #[Route('/procesar_login', name:'procesar_login')]
@@ -60,13 +65,20 @@
 
             $usuarios = $this->getDoctrine()->getRepository(User::class)->buscarPorNombreOEmail($query);
 
-            return $this->render('includes/resultado_busqueda.html.twig', ['usuarios' => $usuarios,]);
+            return $this->render('includes/resultado_busqueda.html.twig', ['usuario' => $usuarios,]);
         }
 
         #[Route('/logout', name:'app_logout')]
         public function logout()
         {
             return null;
+        }
+        
+        #[Route('/usuarios', name:'usuarios')]
+        public function mostrarUsuarios(EntityManagerInterface $entityManager): Response
+        {
+            $usuarios= $entityManager->getRepository(Usuario::class)->findAll();
+            return $this->render('usuarios.html.twig', ['usuario' => $usuarios,]);
         } 
     }
 ?>
