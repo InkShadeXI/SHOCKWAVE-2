@@ -52,7 +52,7 @@ class ControladorHome extends AbstractController {
 
         // Obtén los posts de los usuarios amigos
         $postsAmigos = $entityManager->createQueryBuilder()
-        ->select('p.id, u.nombre_usuario, p.texto_post')
+        ->select('p.id, u.nombre_usuario, p.texto_post, p.num_likes, p.num_dislikes')
         ->from(PostUsuario::class, 'p')
         ->join('p.usuario', 'u')  // Une con la entidad Usuario
         ->andWhere('p.usuario IN (:idsAmigos)')
