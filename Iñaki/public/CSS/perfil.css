@@ -1,0 +1,11 @@
+#perfil{
+    margin: 10% auto 10%;
+    border: 2px solid grey;
+    text-align: center;
+    width: 30%;
+    color: white;
+    box-shadow: 10px 5px 5px #929292;
+}
+body {
+    background-color: #1a1a1a;
+}
