@@ -4,6 +4,8 @@ body {
 
 textarea{
     vertical-align: top;
+    resize: none;
+    width: 80%;
 }
 
 button {
@@ -19,6 +21,7 @@ div {
     box-sizing: border-box;
     width: 28%;
     border: 1px solid white;
+    box-shadow: 10px 5px 5px #929292; 
     border-radius: 5px;
     padding: 1% 2%;
     text-align: center;
@@ -41,7 +44,7 @@ p {
     margin: 1%;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"]{
     width: 80%; 
 }
 
@@ -57,4 +60,9 @@ button, input[type="submit"] {
 #Inicio, #Submit{
     padding: 2% 1%;
     width: 68%;
+}
+
+.boton:hover{
+    background: rgb(182,0,187);
+    background: linear-gradient(45deg, rgba(0,255,235,1) 20%, rgba(3,207,255,1) 70%, rgba(182,0,187,1) 100%);
 }
