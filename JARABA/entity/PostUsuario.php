@@ -33,9 +33,9 @@ class PostUsuario
 	#[ORM\Column(type:'integer', name:'NumDislikes')]
     private $num_dislikes;
 
-    #[ORM\ManyToOne(targetEntity: 'Usuario', inversedBy: 'postUsuario')]
-#[ORM\JoinColumn(name: 'IdUsuarioPost', referencedColumnName: 'IdUsuario')]
-private $usuario;
+    #[ORM\ManyToOne(targetEntity: 'Usuario', inversedBy: 'postusuario')]
+    #[ORM\JoinColumn(name: 'IdUsuarioPost', referencedColumnName: 'IdUsuario')]
+    private $usuario;
 
     #[ORM\OneToMany(targetEntity:'Comentario', mappedBy:'post_usuario')]
     private $cementarios;
