@@ -22,11 +22,11 @@ class Comentario
     private $texto_comentario;
 
     #[ORM\ManyToOne(targetEntity:"Usuario", inversedBy:'comentario')]
-    #[ORM\JoinColumn(name:"Usuario", referencedColumnName:"IdUsuario")]
+    #[ORM\JoinColumn(name:"IdComentario", referencedColumnName:"IdUsuario")]
     private $usuario_comentario; 
 
-    #[ORM\OneToOne(targetEntity:"PostUsuario", inversedBy:'comentario')]
-    #[ORM\JoinColumn(name:"PostUsuario", referencedColumnName:"IdPost")]
+    #[ORM\ManyToOne(targetEntity:"PostUsuario", inversedBy:'comentario')]
+    #[ORM\JoinColumn(name:"IdComentario", referencedColumnName:"IdPost")]
     private $post_comentario; 
 
     
