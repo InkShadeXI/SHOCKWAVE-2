@@ -21,20 +21,16 @@ class ControladorComentario extends AbstractController
 {
     #[Route('/comentar_post', name:'comentar_post')]
     public function comentar (Request $request, EntityManagerInterface $entityManager): Response {
-        $usuario_receptor = $request->request->get("usuario");
-        $id_post = $request->request->get("id_post");
-        $query_comentarios = $entityManager->createQueryBuilder()
-        ->select('c.id_comentario, u.nombre_usuario, c.texto_comentario')
-        ->from(Comentario::class, 'c')
-        ->join('c.usuario_comentario', 'u')  // Une con la entidad Usuario (usando el alias 'usuario_comentario')
-        ->andWhere('c.id_comentario_post = :idPost')
-        ->setParameter('idPost', $id_post)
-        ->getQuery()
-        ->getResult();
+        $usuarioReceptor = $request->request->get("usuario");
+        $idPost = $request->request->get("id_post");
+        $repository = $entityManager->getRepository(Comentario::class);
+
+        $comentarios = $repository->findBy(['id_comentario_post' => $idPost]);
+    
         return $this->render('comentario.html.twig', [
-            "usuario_receptor" => $usuario_receptor,
-            "id_post" => $id_post,
-            "comentarios" => $query_comentarios
+            "usuario_receptor" => $usuarioReceptor,
+            "id_post" => $idPost,
+            "comentarios" => $comentarios
         ]);
     }
 
