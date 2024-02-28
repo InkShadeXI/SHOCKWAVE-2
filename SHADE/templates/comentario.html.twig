@@ -24,34 +24,11 @@
     <h2>Comentarios:</h2><br>
     {% for comentario in comentarios %}
     <div>
-        <h2>{{ comentario.nombre_usuario }} ha comentado:</h2><br>
-        <p>{{ comentario.texto_comentario }}</p>
+        <h2>{{ comentario.getIdComentarioUsuario() }} ha comentado:</h2><br>
+        <p>{{ comentario.getTextoComentario() }}</p>
     </div>
     {% endfor %}
     <script src = "{{ asset('JS/jquery.js') }}"></script>
-    <script>
-        $(document).ready(function () {
-            var color = "black";
-            $("button").click(function () {
-                if (color == "black") {
-                    color = "white";
-                    $("body").css("background-color", color);
-                    $("h1").css("color", "black");
-                    $("h2").css("color", "black");
-                    $("p").css("color", "black");
-                    $("div").css("border-color", "black");
-                    $(".button").css("border-color", "black");
-                } else {
-                    color = "black";
-                    $("body").css("background-color", color);
-                    $("h1").css("color", "white");
-                    $("h2").css("color", "white");
-                    $("p").css("color", "white");
-                    $("div").css("border-color", "white");
-                    $(".button").css("border-color", "white");
-                }
-            });
-        });
-    </script>
+    <script src="{{ asset('JS/claro_oscuro.js')}}"></script>
 </body>
 </html>
