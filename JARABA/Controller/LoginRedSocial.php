@@ -40,7 +40,7 @@ class LoginRedSocial extends AbstractController
         // Comparar la contraseña
         if (!$error) {
             // Contraseña correcta
-            return $this->render('home.html.twig');
+            return $this->redirectToRoute('home');
         } else {
             // Contraseña incorrecta
             return $this->render('error_login.html.twig', [
@@ -49,7 +49,7 @@ class LoginRedSocial extends AbstractController
         }
     }
 	
-	#[Route('/logout', name:'ctrl_logout')]
+	#[Route('/logout', name:'app_logout')]
     public function logout(){    
         return $this->render('login.html.twig');
     }    
