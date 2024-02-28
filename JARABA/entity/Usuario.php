@@ -40,8 +40,8 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity:'Comentario', mappedBy:'usuario')]
     private $comentarios;
 
-    #[ORM\OneToMany(targetEntity:'PostUsuario', mappedBy:'usuario')]
-    private $postsUsuario;
+    #[ORM\OneToMany(targetEntity: 'PostUsuario', mappedBy: 'usuario')]
+private $postsUsuario;
 
     #[ORM\OneToMany(targetEntity: "Amistad", mappedBy: "usuario")]
     private $amistades;
