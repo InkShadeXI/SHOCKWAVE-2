@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div{
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <form action="{{ path('mostrar_plantilla_equipo') }}" method="post">
+        <div>
+        <p>Quieres solicitar amistad con: {{ usu.NombreUsuario }}</p><input type="submit" value="Si">
+        <input type="text" name="" id="">
+       </div>
+    </form>
+    <script src="buscador.js"></script>
+</body>
+</html>

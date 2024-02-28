@@ -1,0 +1,74 @@
+{# templates/registro.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro</title>
+</head>
+<body>
+    <div>
+        <form action="{{ path('registro') }}" method="POST" onsubmit="return validarFormulario(event)">
+            *Indica un nombre de usuario: <input type="text" name="nombre" id="nombre" class="registro"><br><br>
+            *Indica un email de registro: <input type="text" name="correo" id="correo" class="registro"><br><br>
+            *Indica una contraseña: <input type="password" name="passwd"  id="passwd" class="registro"><br><br>
+            *Indica una localidad: <input type="text" name="ciudad" id="ciudad" class="registro"><br><br>
+            Fecha de nacimiento: <input type="text" name="fechaN" id="fechaN" class="registro" placeholder="DD-MM-YYYY"><br><br>
+            Datos adicionales: <input type="text" maxlength="300" name="datos" id='datos' class="registro"><br><br>
+            <input type="submit" value="Registrarse">
+            <input type="hidden" name="confirmacion" id="confirmacion" value="correo">
+        </form>
+        <a href="{{ path('log') }}"><button>Volver al Inicio</button></a>
+    </div>
+    <p>*Valores obligatorios</p>
+    <script>
+        function validarFormulario(event) {
+            var nombre = document.getElementById("nombre").value;
+            var correo = document.getElementById("correo").value;
+            var passwd = document.getElementById("passwd").value;
+            var ciudad = document.getElementById("ciudad").value;
+            var fechaN = document.getElementById("fechaN").value;
+
+            // Validación de campos vacíos
+            if (nombre == "" || correo == "" || passwd == "" || ciudad == "") {
+                alert("Por favor, complete todos los campos obligatorios.");
+                return false;
+            }
+
+            // Validación de formato de email
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(correo)) {
+                alert("Por favor, introduzca una dirección de correo electrónico válida.");
+                return false;
+            }
+
+            // Validación de contraseña
+            if (passwd.length < 8) {
+                alert("La contraseña debe tener al menos 8 caracteres.");
+                return false;
+            }
+
+            // Validación de fecha de nacimiento
+            if (fechaN !== "") {
+                var fechaRegex = /^\d{1,2}-\d{1,2}-\d{4}$/;
+                if (!fechaRegex.test(fechaN)) {
+                    alert("Por favor, introduzca la fecha de nacimiento en el formato DD-MM-YYYY.");
+                    return false;
+                }
+
+                var partesFecha = fechaN.split('-');
+                var dia = parseInt(partesFecha[0], 10);
+                var mes = parseInt(partesFecha[1], 10);
+                var año = parseInt(partesFecha[2], 10);
+
+                // Validar la fecha
+                var fechaNacimiento = new Date(año, mes - 1, dia); // mes - 1 porque los meses en JavaScript van de 0 a 11
+                var fechaActual = new Date();
+                if (fechaNacimiento >= fechaActual) {
+                    alert("La fecha de nacimiento debe ser anterior a la fecha actual.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

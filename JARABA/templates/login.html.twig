@@ -1,0 +1,58 @@
+{# templates/login.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/login.css') }}">
+</head>
+<body>
+    <button><img src="{{ asset('IMG/night.png') }}"></button>
+    <div>
+    <h1>¡Bienvenido a Shockwave!</h1>
+        <form action="{{ path('procesar_login') }}" method="post">
+        <table>
+            <tr>
+                <td><p>Usuario:</p></td>
+                <td><input type="text" name="_username"/></td>
+            </tr>
+            <tr>
+                <td><p>Contraseña:</p></td>
+                <td><input type="password" name="_password"/><br></td>
+            </tr>
+            <tr>
+                <td><input type="submit" class="button"/></td>
+            </tr>
+        </table>
+        </form>
+        <form action="{{path('registro')}}">
+            <input type="submit" name="registro" class="button" value="Registrarse">
+        </form>
+        <a href="{{path('correo_contraseña')}}">¿Has olvidado tu contraseña?</a>
+    </div>
+    <script src = "{{ asset('JS/jquery.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var color = "black";
+            $("button").click(function () {
+                if (color == "black") {
+                    color = "white";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "black");
+                    $("p").css("color", "black");
+                    $("div").css("border-color", "black");
+                    $(".button").css("border-color", "black");
+                } else {
+                    color = "black";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "white");
+                    $("p").css("color", "white");
+                    $("div").css("border-color", "white");
+                    $(".button").css("border-color", "white");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

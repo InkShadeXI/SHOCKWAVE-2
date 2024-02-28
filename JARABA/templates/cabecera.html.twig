@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Título de tu página</title>
+    <!-- Aquí puedes incluir tus estilos CSS -->
+    <link rel="stylesheet" href="{{ asset('CSS/cabecera.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                {% if app.User is not null %}
+                    <li><a id="nombre">Bienvenido: {{ app.User.NombreUsuario }}</a></li>
+                {% endif %}
+                <li><a href="{{ path('home') }}" class="enlaces_nav">Inicio</a></li>
+                <li><a href="{{ path('usuarios') }}" class="enlaces_nav">Usuarios</a></li>
+                {% if app.User is not null %}
+                    <li><a href="{{ path('perfil', {id: app.User.IdUsuario}) }}" class="enlaces_nav">Perfil</a></li>
+                {% endif %}
+                <li><a href="{{ path('amistad') }}">Amistad</a></li>
+                {% if app.user.UsuarioAdmin == 1 %}
+                    <li><a href="{{ path('zona_admin') }}">Zona Admin</a></li>
+                {% endif %}
+                <li><a href="{{ path('app_logout') }}" class="enlaces_nav" id="buscador">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>   
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    {% include 'cabecera.html.twig' %}
+<head>
+    <title>Perfil de {{ usuario.NombreUsuario }}</title>
+    <style>
+        div {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Perfil de {{ usuario.NombreUsuario }}</h1>
+        <div>
+            <p>Nombre: {{ usuario.NombreUsuario }}</p>
+            <p>Correo: {{ usuario.CorreoUsuario }}</p>
+            <p>Localidad: {{ usuario.Localidad ? usuario.Localidad : 'Localidad no indicada'}}</p>
+            <p>Fecha de Nacimiento: {{ usuario.FechaNacimiento ? usuario.FechaNacimiento|date('d-m-Y') : 'Fecha no indicada' }}</p>
+            <p>Otros datos: {{ usuario.Descripcion ? usuario.Descripcion : 'No hay datos de interés'}}</p>
+        </div>
+        
+ {% if usuario.NombreUsuario != app.user.NombreUsuario and puedeEnviarSolicitud %}
+            <div>
+                <form action="{{ path('enviar_solicitud_amistad') }}" method="POST">
+                    <input type="hidden" name="usuario_destino_nombre" value="{{ usuario.NombreUsuario }}">
+                    <button type="submit">Enviar solicitud de amistad</button>
+                </form>
+            </div>
+        {% endif %}
+        
+         {% if usuario.NombreUsuario == app.user.NombreUsuario %}
+        <div>
+            <form action="{{ path('correo_borrado') }}" method="POST" onsubmit="return validarFormulario(event)">
+                <input type="hidden" value="confirmar" name="confirmar">
+                <input type="submit" value="Borrar Cuenta">
+            </form>
+        </div>
+          {% endif %}
+    </div>
+</body>
+</html>

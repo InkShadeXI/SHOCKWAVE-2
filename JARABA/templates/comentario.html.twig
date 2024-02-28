@@ -1,0 +1,35 @@
+{# templates/login.html.twig #}
+   {% include 'cabecera.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/generic.css') }}">
+    <link rel="stylesheet" href="{{ asset('CSS/comentario.css') }}">
+</head>
+<body>
+    <button class="light_dark"><img src="{{ asset('IMG/night.png') }}" class="logo"></button><br>
+    <div>
+        <form action="{{ path('procesar_comentario') }}" method="post">
+            <!-- Campo oculto para almacenar el valor del id del post y el del usuario actual -->
+            <input type="hidden" name="id_post" value="{{ id_post }}">
+            <!-- Formulario visible -->
+            <h2>Comenta lo que piensas del post de {{ usuario_receptor }}:</h2><br>
+            <textarea name="comentario"></textarea><br>
+            <input type="submit" class="button" value="comentar"/>
+        </form>
+    </div><br><br>
+    <!-- Aquí comienza a contar todos los comentarios hasta ahora -->
+    <h2>Comentarios:</h2><br>
+   {% for comentario in comentarios %}
+    <div>
+        <h2>{{ comentario.getUsuario().getNombreUsuario() }} ha comentado:</h2><br>
+        <p>{{ comentario.getTextoComentario() }}</p>
+    </div>
+{% endfor %}
+    <script src = "{{ asset('JS/jquery.js') }}"></script>
+    <script src="{{ asset('JS/claro_oscuro.js')}}"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{# templates/home.html.twig #}
+{% include 'cabecera.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/generic.css') }}">
+    <link rel="stylesheet" href="{{ asset('CSS/home.css') }}">
+</head>
+<body>
+    <!-- No autentifica al usuario -->
+    <p>¡Bienvenido de nuevo {{ app.user.getNombreUsuario() }}!</p>
+    <button class="light_dark"><img src="{{ asset('IMG/night.png') }}" class="logo"></button>
+    {% for post in postsAmigos %}
+    <div>
+        <form action="{{ path('comentar_post') }}" method="post">
+            <!-- Campo oculto para almacenar el valor del h2 -->
+            <input type="hidden" name="usuario" value="{{ post['nombre_usuario'] }}">
+            <input type="hidden" name="id_post" value="{{ post['id'] }}">
+            <!-- ... otros campos del formulario ... -->
+            <h2>{{ post['nombre_usuario'] }}</h2><h2>&nbsp;ha publicado:</h2><br>
+            <p name="contenido">{{ post['texto_post'] }}</p><br><br>
+            <input type="submit" class="button" value="comentar"></input>
+        </form>
+        <!-- Reacciones (like/disslike) -->
+        <form action="{{ path('procesar_reaccion')}}" method="post">
+            <!-- Campo oculto para almacenar el valor del h2 -->
+            <input type="hidden" name="usuario" value="{{ post['id'] }}">
+            <button class="reaction like" type="submit"><img src="{{ asset('IMG/like.png') }}" class="simple_img"></button>
+            <p class="texto_like">{{ post['num_likes']}}</p>
+        </form>
+        <form action="{{ path('procesar_reaccion')}}" method="post">
+            <!-- Campo oculto para almacenar el valor del h2 -->
+            <input type="hidden" name="usuario" value="{{ post['id'] }}">
+            <button class="reaction disslike" type="submit"><img src="{{ asset('IMG/dislike.png') }}" class="simple_img"></button>
+            <p class="texto_disslike">{{ post['num_dislikes']}}</p>
+        </form>
+    </div>
+    {% endfor %} 
+    <script src = "{{ asset('JS/jquery.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var color = "black";
+            $(".light_dark").click(function () {
+                if (color == "black") {
+                    color = "white";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "black");
+                    $("h2").css("color", "black");
+                    $("p").css("color", "black");
+                    $("div").css("border-color", "black");
+                    $(".button").css("border-color", "black");
+                } else {
+                    color = "black";
+                    $("body").css("background-color", color);
+                    $("h1").css("color", "white");
+                    $("h2").css("color", "white");
+                    $("p").css("color", "white");
+                    $("div").css("border-color", "white");
+                    $(".button").css("border-color", "white");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

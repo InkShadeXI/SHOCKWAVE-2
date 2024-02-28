@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %}Usuarios{% endblock %}
+
+{% block body %}
+    {% include 'cabecera.html.twig' %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+    $('#buscador-form').submit(function(event) {
+        event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+
+        var query = $('#formulario-busqueda').val();
+        var url = '{{ path('usuarios') }}'; // Actualiza el URL según corresponda
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            data: { q: query },
+            success: function(response) {
+                $('#resultado_busqueda').html(response); // Actualiza los resultados de búsqueda en la página
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+    </script>
+    <div class="separador-cabecera"></div>
+    <!-- Agregar el formulario de búsqueda -->
+    <style>
+    #formulario-busqueda{
+        float:left;
+    }
+    .usuario{
+        border:1px black solid;
+        width:50%;
+    }
+    </style>
+    <div id="perfiles">
+    <form id="buscador-form">
+    <input type="text" name="q" placeholder="Buscar usuarios" id="formulario-busqueda">
+    <button type="submit" id="buscar-btn">Buscar</button>
+    <div id="resultado_busqueda"></div>
+      </form>
+        {% for usuario in usuario %}
+            <a href="{{ path('perfil', { id: usuario.id_usuario }) }}">
+                <div class="usuario">
+                    <h3>{{ usuario.nombre_usuario }}</h3>
+                    <p>Email: {{ usuario.correo_usuario }}</p>
+                    <p>Localidad: {{ usuario.localidad ? usuario.localidad : 'Localidad no indicada' }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}
