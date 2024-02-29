@@ -344,52 +344,58 @@ public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $
 
 // home
 
-#[Route('/home', name: 'home')]
-public function process(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+#[Route('/home', name:'home')]
+public function process(Request $request, EntityManagerInterface $entityManager): Response {
+$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-    $usuario = $this->getUser();
+// Obtén el usuario actualmente autenticado
+$usuario = $this->getUser();
 
-    if ($usuario) {
-        $idUsuario = $usuario->getIdUsuario();
-        $nombreUsuario = $usuario->getNombreUsuario();
+// Dentro de tu controlador
+dump($usuario);
 
-        // Obtener los IDs de amigos del usuario
-        $idsAmigos = $entityManager->createQueryBuilder()
-            ->select('CASE WHEN a.usuario1 = :idUsuario THEN IDENTITY(a.usuario2) ELSE IDENTITY(a.usuario1) END AS idAmigo')
-            ->from(Amistad::class, 'a')
-            ->andWhere('a.estado = :estado') 
-            ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
-            ->setParameter('estado', 'aceptada') // Cambiado de 'Aceptado' a 'aceptada'
-            ->setParameter('idUsuario', $idUsuario)
-            ->getQuery()
-            ->getResult();
+// Verifica si el usuario está autenticado
+if ($usuario) {
+    // Obtén el ID del usuario actual
+    $idUsuario = $usuario->getIdUsuario();
+    $nombreUsuario = $usuario->getNombreUsuario();
 
-        // Extraer solo los IDs de amigos
-        $idsAmigos = array_column($idsAmigos, 'idAmigo');
+    // Obtener los ids de los amigos (FUNCIONA)
+    $idsAmigos = $entityManager->createQueryBuilder()
+    ->select('CASE WHEN a.usuario1 = :idUsuario THEN IDENTITY(a.usuario2) ELSE IDENTITY(a.usuario1) END AS idAmigo')
+    ->from(Amistad::class, 'a')
+    ->andWhere('a.estado = :estado') // Aquí usa el nombre correcto de la columna 'Estado'
+    ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
+    ->setParameter('estado', 'Aceptado') // Aquí también usa el nombre correcto de la columna 'Estado'
+    ->setParameter('idUsuario', $idUsuario)
+    ->getQuery()
+    ->getResult();
 
-        // Agregar el ID del usuario actual para incluir sus propios posts
-        $idsAmigos[] = $idUsuario;
+    // Transforma los resultados en un array plano de IDs
+    $idsAmigos = array_column($idsAmigos, 'idAmigo');
 
-        // Obtener los posts de los amigos
-        $postsAmigos = $entityManager->createQueryBuilder()
-            ->select('p.id, u.nombre_usuario, p.texto_post, p.num_likes, p.num_dislikes')
-            ->from(PostUsuario::class, 'p')
-            ->join('p.usuario', 'u')  
-            ->andWhere('p.usuario IN (:idsAmigos)')
-            ->setParameter('idsAmigos', $idsAmigos)
-            ->getQuery()
-            ->getResult();
+    // Añade el ID del usuario actual para incluir también su propio ID
+    $idsAmigos[] = $idUsuario;
 
-        return $this->render('home.html.twig', [
-            'idUsuario' => $idUsuario,
-            'nombreUsuario' => $nombreUsuario,
-            'postsAmigos' => $postsAmigos // Pass the posts of friends to the template
-        ]);
-    } else {
-        throw $this->createAccessDeniedException('No estás autenticado.');
-    }
+    // Obtén los posts de los usuarios amigos
+    $postsAmigos = $entityManager->createQueryBuilder()
+    ->select('p.id, u.nombre_usuario, p.texto_post, p.num_likes, p.num_dislikes')
+    ->from(PostUsuario::class, 'p')
+    ->join('p.usuario', 'u')  // Une con la entidad Usuario
+    ->andWhere('p.usuario IN (:idsAmigos)')
+    ->setParameter('idsAmigos', $idsAmigos)
+    ->getQuery()
+    ->getResult();
+
+    return $this->render('home.html.twig', [
+        'idUsuario' => $idUsuario,
+        'nombreUsuario' => $nombreUsuario,
+        'postsAmigos' => $postsAmigos
+    ]);
+} 
+else {
+    throw $this->createAccessDeniedException('No estás autenticado.');
+}
 }
 
 // codigo de borrar el correo
