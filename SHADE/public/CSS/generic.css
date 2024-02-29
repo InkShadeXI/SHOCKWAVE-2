@@ -40,8 +40,8 @@ h2, p {
     height: 25px;
 }
 
-@media (max-width: 852px) {
+@media (min-width: 852px) {
     div {
-        width: 80%;
+        width: 60%;
     }
 }
