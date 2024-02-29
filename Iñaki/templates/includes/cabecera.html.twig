@@ -10,40 +10,8 @@
             {% if app.User is not null %}
                 <li><a href="{{ path('perfil',{'id': app.User.IdUsuario}) }}" class="enlaces_nav">Perfil</a></li>
             {% endif %}
-            {# <li><a href="{{ path('amistades_pendientes') }}">Amistades Pendientes</a></li> #}
-            <li id="buscador-container">
-                <form id="buscador">
-                    <input type="text" name="q" placeholder="Buscar usuarios" id="formulario-busqueda">
-                    <div id="resultado_busqueda"></div>
-                </form>
-            </li>
-            <li><a href="{{ path('app_logout') }}" class="enlaces_nav" id="buscador">Cerrar Sesión</a></li>
+            <li><a href="{{ path('amistad') }}" class="enlaces_nav">Amistades Pendientes</a></li>
+            <li><a href="{{ path('app_logout') }}" class="enlaces_nav">Cerrar Sesión</a></li>
         </ul>
     </nav>
-    
-    
-    {# Script para AJAX para el buscador #}
-    {# <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#formulario-busqueda').submit(function(e) {
-                e.preventDefault(); // Evita que se envíe el formulario normalmente
-
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ path('buscar_usuarios') }}',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        // Limpiar resultados anteriores
-                        $('#resultado_busqueda').empty();
-
-                        // Mostrar resultados
-                        $.each(response, function(index, usuario) {
-                            $('#resultado_busqueda').append('<div><a href="{{ path('perfil', {'id': usuario.id}) }}">{{ usuario.nombre }}</a></div>');
-                        });
-                    }
-                });
-            });
-        });
-    </script> #}
 </header>
