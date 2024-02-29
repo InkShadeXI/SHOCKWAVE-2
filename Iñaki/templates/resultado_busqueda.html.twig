@@ -2,10 +2,10 @@
     <ul>
         {% for usuario in usuarios %}
             <li>
-                <a href="{{ path('perfil', { 'id': usuario.id }) }}">
+                <a href="{{ path('perfil', { 'id': usuario.IdUsuario }) }}">
                     <div>
-                        {{ usuario.nombre }}
-                        <img src="{{ asset('uploads/' ~ usuario.foto) }}" alt="Foto de perfil">
+                        {{ usuario.NombreUsuario }}
+                        {{ usuario.CorreoUsuario }}                        
                     </div>
                 </a>
             </li>
