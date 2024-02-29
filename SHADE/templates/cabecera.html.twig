@@ -1,9 +1,0 @@
-{% if app.user is not null %}
-    <p>Usuario: {{ app.user.getNombreUsuario() }}</p>
-    <a href="{{ path('procesar_login') }}">Home</a>
-    <a href="{{ path('procesar_login') }}">Perfil</a>
-    <a href="{{ path('procesar_login') }}">Cerrar sesión</a>
-{% else %}
-    <!-- El usuario no está autenticado, puedes mostrar un enlace para iniciar sesión u otra información relevante -->
-    <a href="{{ path('procesar_login') }}">Iniciar sesión</a>
-{% endif %}
