@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+    <link rel="stylesheet" href="{{ asset('CSS/correo_contraseña.css') }}">
+
+<html>
+<head>
+</head>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+    <div>
+        <div id="contenedor" style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+            <form action="{{ path('correo_contraseña') }}" method="POST" onsubmit="return validarFormulario(event)">
+                <h2>Indica el correo</h2>
+                <p>Recuerda que se te enviará un correo para restablecer la contraseña<p>
+                <input type="mail" name="correo" id="correo"></br>
+                <input type="submit" value="Enviar" class="boton">
+                <a href="{{ path('log') }}"><button class="boton">Volver al Inicio</button></a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
