@@ -15,6 +15,7 @@ use App\Entity\Usuario;
 use App\Entity\PostUsuario;
 use App\Entity\Comentario;
 use App\Entity\Amistad;
+use DateTime;
 use Exception;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -229,30 +230,30 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
         'puedeEnviarSolicitud' => $puedeEnviarSolicitud
     ]);
 }
-        #[Route('/usuarios', name:'usuarios')]
-        public function mostrarUsuarios(EntityManagerInterface $entityManager,Request $request): Response
-        {
-            if ($request->isMethod('GET')) {
-                $query = $request->query->get('q');
+#[Route('/usuarios', name:'usuarios')]
+public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $request): Response
+{
+    if ($request->isMethod('GET')) {
+        $query = $request->query->get('q');
 
-              
-                    $usuarios = $entityManager->createQueryBuilder()
-                        ->select('u.nombre_usuario', 'u.correo_usuario', 'u.localidad,u.id_usuario')
-                        ->from(Usuario::class, 'u')
-                        ->andWhere('u.nombre_usuario LIKE :letra')
-                        ->setParameter('letra', '%' . $query . '%')
-                        ->getQuery()
-                        ->getArrayResult();
-            
-                    return $this->render('usuarios.html.twig', ['usuario' => $usuarios]);
-                
-            }else{
-            $usuarios= $entityManager->getRepository(Usuario::class)->findAll();
-            return $this->render('usuarios.html.twig', ['usuario' => $usuarios,]);
-            }
+        if ($query) {
+            $usuarios = $entityManager->createQueryBuilder()
+                ->select('u.nombre_usuario', 'u.correo_usuario', 'u.localidad,u.id_usuario')
+                ->from(Usuario::class, 'u')
+                ->andWhere('u.nombre_usuario LIKE :letra')
+                ->setParameter('letra', $query . '%') // Cambiado para que busque los usuarios que comienzan con la letra proporcionada
+                ->getQuery()
+                ->getArrayResult();
+
+                return $this->render('usuarios.html.twig', ['usuario' => $usuarios]);
+        } else {
+            $usuarios = $entityManager->getRepository(Usuario::class)->findAll();
         }
-        
+    }
 
+    $usuarios= $entityManager->getRepository(Usuario::class)->findAll();
+    return $this->render('usuarios.html.twig', ['usuario' => $usuarios]);
+}
       
         #[Route('/comentar_post', name:'comentar_post')]
         public function comentar(Request $request, EntityManagerInterface $entityManager): Response {
@@ -268,11 +269,57 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
             ]);
         }
 
-        #[Route('/procesar_reaccion', name:'procesar_reaccion')]
-        public function reaccion (Request $request, EntityManagerInterface $entityManager): Response {
-            $id_post = $request->request->get("id_post");
+        #[Route('/crear_post', name:'crear_post')]
+        public function crear_post(Request $request, EntityManagerInterface $entityManager): Response {
+            if ($request->isMethod('POST')) {
+                $titulo = $request->request->get("TituloFoto");
+                $texto = $request->request->get("TextoPost");
+                $idUsuario =$request->request->get("id"); // Obtener el ID del usuario
+                $usuario = $entityManager->getRepository(Usuario::class)
+                ->findOneBy(['id_usuario' => $idUsuario]);
+                $fechaCreacion = new DateTime();
+
+                $post = new PostUsuario();
+                $post->setIdUsuarioPost($usuario->getIdUsuario());  // Establecer el ID del usuario en el post
+                $post->setTituloFoto($titulo);
+                $post->setTextoPost($texto);
+                $post->setFechaCreacion($fechaCreacion);
             
-            return $this->render('home.html.twig');
+                // Persistir el post en la base de datos
+                $entityManager->persist($post);
+                $entityManager->flush();
+                
+                // Redireccionar al perfil del usuario con el ID del usuario
+                return $this->redirectToRoute('perfil', ['id' => $idUsuario]);
+            } else {
+                return $this->render('post.html.twig');
+            }
+        }
+
+        #[Route('/procesar_reaccion', name:'procesar_reaccion')]
+        public function reaccion(Request $request, EntityManagerInterface $entityManager): Response
+        {
+            $id_post = $request->request->get("id_post");
+            $post = $entityManager->getRepository(PostUsuario::class)->find(['id' => $id_post]);
+        
+            if (!$post) {
+                throw $this->createNotFoundException('No se encontró el post con el ID: '.$id_post);
+            }
+        
+                $like = $request->request->get("like");
+                $dislike = $request->request->get("dislike");
+        
+                if ($like) {
+                    $post->setNumLikes($post->getNumLikes() + 1);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
+                } elseif ($dislike) {
+                    $post->setNumDislikes($post->getNumDislikes() + 1);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
+                }
+            
+            return $this->render('home.html.twig'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
         }
     
         #[Route('/procesar_comentario', name:'procesar_comentario')]
