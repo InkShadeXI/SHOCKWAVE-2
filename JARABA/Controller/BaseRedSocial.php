@@ -382,12 +382,11 @@ public function process(Request $request, EntityManagerInterface $entityManager)
             ->getQuery()
             ->getResult();
 
-                return $this->render('home.html.twig', [
-                    'idUsuario' => $idUsuario,
-                    'nombreUsuario' => $nombreUsuario,
-                    'postsAmigos' => $postsAmigos
-                ]);
-
+        return $this->render('home.html.twig', [
+            'idUsuario' => $idUsuario,
+            'nombreUsuario' => $nombreUsuario,
+            'postsAmigos' => $postsAmigos // Pass the posts of friends to the template
+        ]);
     } else {
         throw $this->createAccessDeniedException('No estás autenticado.');
     }
