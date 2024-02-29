@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    div{
+        border:1px solid black;
+    }
+    </style>
+</head>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+    <div>
+        <div>
+            <form action="{{ path('recuperar_contraseña', {'correo': correo}) }}" method="POST" onsubmit="return validarFormulario(event)">
+                <input type="text" name="passw">
+                <input type="hidden" name="correo" value="{{ correo }}">
+                <input type="submit" value="Cambiar Contraseña">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
