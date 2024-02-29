@@ -12,7 +12,7 @@
     <header>
         <nav>
             <input type="checkbox" id="check">
-            <label for="check" class="checkbtn">
+            <label for="check" class="checkbtn" id="dragHandle">
                 <i class="fa-solid fa-bars"></i>
             </label>
             <ul>
@@ -29,5 +29,30 @@
             </ul>
         </nav>
     </header>
+    <script>
+        const dragHandle = document.getElementById('dragHandle');
+        let isDragging = false;
+        let offsetX, offsetY;
+    
+        dragHandle.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - dragHandle.getBoundingClientRect().left;
+            offsetY = e.clientY - dragHandle.getBoundingClientRect().top;
+        });
+    
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const x = e.clientX - offsetX;
+                const y = e.clientY - offsetY;
+    
+                dragHandle.style.left = `${x}px`;
+                dragHandle.style.top = `${y}px`;
+            }
+        });
+    
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    </script>
 </body>
 </html>
