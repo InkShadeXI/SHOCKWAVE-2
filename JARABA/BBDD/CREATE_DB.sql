@@ -18,8 +18,8 @@ CREATE TABLE Amistad (
     IdUsuario1 INT,
     IdUsuario2 INT,
     Estado VARCHAR(100), -- Cambiado a VARCHAR
-    FOREIGN KEY (IdUsuario1) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE,
-    FOREIGN KEY (IdUsuario2) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE
+    FOREIGN KEY (IdUsuario1) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (IdUsuario2) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE PostUsuario (
@@ -31,7 +31,7 @@ CREATE TABLE PostUsuario (
     NumLikes INT,
     NumDislikes INT,
     FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (IdUsuarioPost) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE
+    FOREIGN KEY (IdUsuarioPost) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Comentario (
@@ -39,8 +39,8 @@ CREATE TABLE Comentario (
     IdComentarioPost INT,
     IdComentarioUsuario INT,
     TextoComentario VARCHAR(300),
-    FOREIGN KEY (IdComentarioPost) REFERENCES PostUsuario(IdPost) ON DELETE CASCADE,
-    FOREIGN KEY (IdComentarioUsuario) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE
+    FOREIGN KEY (IdComentarioPost) REFERENCES PostUsuario(IdPost) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (IdComentarioUsuario) REFERENCES Usuario(IdUsuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 INSERT INTO `usuario` (`IdUsuario`, `NombreUsuario`, `CorreoUsuario`, `ContrasenaUsuario`, `UsuarioAdmin`, `Localidad`, `Descripcion`, `FechaNacimiento`) VALUES
@@ -65,6 +65,17 @@ INSERT INTO `amistad` (`IdAmistad`, `IdUsuario1`, `IdUsuario2`, `Estado`) VALUES
 (17, 9, 1, 'pendiente'),
 (18, 1, NULL, 'pendiente'),
 (20, 38, 9, 'aceptada');
+
+INSERT INTO PostUsuario (IdUsuarioPost, TextoPost, ExisteFoto, TituloFoto, NumLikes, NumDislikes, FechaCreacion) VALUES
+(1, '¡Hola mundo!', 0, NULL, 10, 2, '2024-02-29'),
+(2, '¡Este es otro post!', 1, 'Imagen1.jpg', 5, 1, '2024-02-28');
+
+-- Insertar algunos comentarios
+INSERT INTO Comentario (IdComentarioPost, IdComentarioUsuario, TextoComentario) VALUES
+(1, 2, '¡Qué buen post!'),
+(1, 3, 'Interesante'),
+(2, 1, 'Me gusta la imagen'),
+(2, 4, '¿Dónde fue tomada la foto?');
 
 DELIMITER //
 CREATE TRIGGER before_insert_Usuario
