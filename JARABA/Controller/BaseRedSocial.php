@@ -271,6 +271,7 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
         #[Route('/procesar_reaccion', name:'procesar_reaccion')]
         public function reaccion (Request $request, EntityManagerInterface $entityManager): Response {
             $id_post = $request->request->get("id_post");
+            
             return $this->render('home.html.twig');
         }
     
@@ -290,9 +291,7 @@ public function mostrarPerfil(EntityManagerInterface $entityManager, $id): Respo
             $entityManager->persist($comentario);
             $entityManager->flush();
     
-            return $this->render('error_login.html.twig', [
-                "error" => "Has comentado " . $comentario_usuario . " en el post con id: " . $id_post . " y tienes el id: " . $id_usuario_comentario
-            ]);
+            return $this->render('home.html.twig');
         }
 
 
