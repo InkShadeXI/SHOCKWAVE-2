@@ -11,7 +11,52 @@
                 <li><a href="{{ path('perfil',{'id': app.User.IdUsuario}) }}" class="enlaces_nav">Perfil</a></li>
             {% endif %}
             <li><a href="{{ path('amistad') }}" class="enlaces_nav">Amistades Pendientes</a></li>
+            <li>
+                {% if app.request.attributes.get('_route') == 'usuarios' %}
+                    <input type="text" id="buscador" placeholder="Buscar por nombre o correo">
+                {% endif %}
+            </li>
+            
             <li><a href="{{ path('app_logout') }}" class="enlaces_nav">Cerrar Sesión</a></li>
         </ul>
     </nav>
 </header>
+
+<script>
+    // Función para buscar y filtrar usuarios
+    function filtrarUsuarios() {
+        var busqueda = document.getElementById("buscador").value.trim().toLowerCase();
+        var perfilesDiv = document.getElementById("perfiles");
+
+        // Obtener todos los perfiles
+        var perfiles = perfilesDiv.querySelectorAll(".usuario");
+
+        // Mostrar u ocultar los perfiles según la búsqueda
+        perfiles.forEach(function(perfil) {
+            var nombreUsuario = perfil.querySelector("h3").textContent.toLowerCase();
+            var correoUsuario = perfil.querySelector("p:nth-of-type(1)").textContent.toLowerCase();
+
+            // Mostrar todos los perfiles si la búsqueda está vacía
+            if (busqueda === '') {
+                perfil.style.display = "block";
+            } else {
+                // Crear una expresión regular para buscar coincidencias parciales en la búsqueda
+                var regex = new RegExp(busqueda, 'i');
+
+                // Mostrar el perfil si hay una coincidencia parcial en el nombre de usuario o correo electrónico
+                if (nombreUsuario.match(regex) || correoUsuario.match(regex)) {
+                    perfil.style.display = "block";
+                } else {
+                    perfil.style.display = "none";
+                }
+            }
+        });
+    }
+
+    // Añadir un evento de escucha al campo de búsqueda para ejecutar filtrarUsuarios() al presionar "Enter"
+    document.getElementById("buscador").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            filtrarUsuarios();
+        }
+    });
+</script>
