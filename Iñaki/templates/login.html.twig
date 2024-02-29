@@ -1,4 +1,35 @@
-<script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset('CSS/login.css') }}">
+</head>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+    <button><img src="{{ asset('IMG/night.png') }}"></button>
+    <div id="contenedor">
+    <h1>¡Bienvenido a Shockwave!</h1>
+        <form action="{{ path('procesar_login') }}" method="post">
+            <tr>
+                <td><p>Usuario:</p></td>
+                <td><input type="text" name="_username"/></td>
+            </tr></br>
+            <tr>
+                <td><p>Contraseña:</p></td>
+                <td><input type="password" name="_password"/><br></td>
+            </tr>
+            <tr>
+                <td colspan="3"><input type="submit" class="button" id="login"/></td>
+            </tr>
+        </form>
+        <form action="{{path('registro')}}">
+            <input type="submit" name="registro" class="button" value="Registrarse" id="registrarse">
+        </form></br>
+        <a href="{{path('correo_contraseña')}}">Recuperar contraseña</a>
+    </div>
+    <script src = "{{ asset('JS/jquery.js') }}"></script>
+    <script>
     $(document).ready(function () {
         var color = localStorage.getItem('color') || "black";
         var backgroundImageUrl = localStorage.getItem('backgroundImageUrl') || "{{ asset('ruta/de/la/imagen.jpg') }}";
@@ -39,3 +70,6 @@
         });
     });
 </script>
+
+</body>
+</html>
