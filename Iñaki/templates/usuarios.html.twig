@@ -1,33 +1,30 @@
 <link rel="stylesheet" href="{{ asset('CSS/usuarios.css') }}">
 <body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
 {% include 'includes/cabecera.html.twig' %}
-    <div class="separador-cabecera"></div>
-        <div id="perfiles">
-            {% for usuario in usuario %}
-                <a href="{{ path('perfil', { 'id': usuario.IdUsuario }) }}">
-                    <div class="usuario">
-                        <h3>{{ usuario.NombreUsuario }}</h3>
-                        <p>Email: {{ usuario.CorreoUsuario }}</p>
-                        <p>Localidad: {{ usuario.Localidad ? usuario.Localidad : 'Localidad no indicada'}}</p>
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-{# <script>
-    $(document).ready(function() {
-        $('#buscadorFinal').on('input', function() {
-            var query = $(this).val();
 
-            $.ajax({
-                type: 'GET',
-                url: '{{ path('buscar_usuarios', '{'valorBusqueda': query }') }}',
-                data: { q: query },
-                success: function(response) {
-                    $('#perfiles').html(response);
-                }
-            });
-        });
+<div class="separador-cabecera"></div>
+<div id="perfiles"></div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var perfilesDiv = document.getElementById("perfiles");
+        {% for usuario in usuario %}
+            var enlace = document.createElement("a");
+            enlace.setAttribute("href", "{{ path('perfil', { 'id': usuario.IdUsuario }) }}");
+            var usuarioDiv = document.createElement("div");
+            usuarioDiv.classList.add("usuario");
+            var titulo = document.createElement("h3");
+            titulo.textContent = "{{ usuario.NombreUsuario }}";
+            var correo = document.createElement("p");
+            correo.textContent = "Email: {{ usuario.CorreoUsuario }}";
+            var localidad = document.createElement("p");
+            localidad.textContent = "Localidad: {{ usuario.Localidad ? usuario.Localidad : 'Localidad no indicada'}}";
+            usuarioDiv.appendChild(titulo);
+            usuarioDiv.appendChild(correo);
+            usuarioDiv.appendChild(localidad);
+            enlace.appendChild(usuarioDiv);
+            perfilesDiv.appendChild(enlace);
+        {% endfor %}
     });
-</script> #}
+</script>
+</body>
+
