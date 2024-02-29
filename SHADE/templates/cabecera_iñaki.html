@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="../public/CSS/cabecera_inaki.css">
+</head>
+<body>
+    <link rel="stylesheet" href="{{ asset('CSS/cabecera.css') }}">
+    <header>
+        <nav>
+            <input type="checkbox" id="check">
+            <label for="check" class="checkbtn">
+                <i class="fa-solid fa-bars"></i>
+            </label>
+            <ul>
+                <li><a id="nombre">Bienvenido: {{app.User.NombreUsuario}}</a></li>
+                <li><a href="{{ path('home') }}" class="enlaces_nav">Inicio</a></li>
+                <li><a href="{{ path('usuarios')}}" class="enlaces_nav">Usuarios</a></li>
+                <li><a href="{{ path('perfil',{'id': app.User.IdUsuario}) }}" class="enlaces_nav">Perfil</a></li>
+                <li><a href="{{ path('amistad') }}" class="enlaces_nav">Amistades Pendientes</a></li>
+                <li>
+                    <input type="text" id="buscador" placeholder="Buscar por nombre o correo">
+                </li>
+                <li><a href="{{ path('zona_admin') }}" class="enlaces_nav">Panel de Administrador</a></li>
+                <li><a href="{{ path('app_logout') }}" class="enlaces_nav">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>
