@@ -1,0 +1,35 @@
+body {
+    background-color: #1a1a1a;
+}
+
+#contenedor{
+        box-sizing: border-box;
+        width: 28%;
+        border: 1px solid white;
+        border-radius: 5px;
+        padding: 1% 2%;
+        box-shadow: 10px 5px 5px #929292;
+        text-align: center;
+        margin: 5% auto;
+        display: block;
+        padding-top: 0;
+        color: white;
+}
+#correo{
+    margin-top: 5%;
+    width: 80%;
+}
+
+.boton{
+     margin: 5% 5%;
+     border: 0px;
+     font-size: large;
+     background: rgb(182,0,187);
+     background: linear-gradient(45deg, rgba(182,0,187,1) 20%, rgba(3,207,255,1) 70%, rgba(0,255,235,1) 100%);
+     border: 2px solid white;
+}
+
+.boton:hover{
+    background: rgb(182,0,187);
+    background: linear-gradient(45deg, rgba(0,255,235,1) 20%, rgba(3,207,255,1) 70%, rgba(182,0,187,1) 100%);
+}
