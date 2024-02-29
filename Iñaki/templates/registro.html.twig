@@ -2,27 +2,25 @@
 <html>
 <head>
     <title>Registro</title>
+    <link rel="stylesheet" href="{{ asset('CSS/registro.css') }}">
     <style>
-        #datos {
-            width: 300px;
-            height: 50px; 
-        }
     </style>
 </head>
-<body>
-    <div>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+    <div id="contenedor">
         <form action="{{ path('registro') }}" method="POST" onsubmit="return validarFormulario(event)">
             *Indica un nombre de usuario: <input type="text" name="nombre" id="nombre" class="registro"><br><br>
             *Indica un email de registro: <input type="text" name="correo" id="correo" class="registro"><br><br>
             *Indica una contraseña: <input type="password" name="passwd"  id="passwd" class="registro"><br><br>
-            *Indica una localidad: <input type="text" name="ciudad" id="ciudad" class="registro"><br><br>
+            *Indica una localidad: <input type="text" maxlength="15"name="ciudad" id="ciudad" class="registro"><br><br>
             Fecha de nacimiento: <input type="date" name="fechaN" id="fechaN" class="registro"><br><br>
-            Datos adicionales: <input type="text" maxlength="300" name="datos" id='datos' class="registro"><br><br>
-            <input type="submit" value="Registrarse"> <br><br>
+            Datos adicionales: <textarea maxlength="300" name="datos" id='datos' class="registro"></textarea><br><br>
+            <p>*Valores obligatorios</p></br></br>
+            <input type="submit" value="Registrarse" id="submit" class="boton"><br><br>
         </form>
-        <a href="{{ path('log') }}"><button>Volver al Inicio</button></a>
+        <a href="{{ path('log') }}"><button id="inicio" class="boton">Volver al Inicio</button></a>
     </div>
-    <p>*Valores obligatorios</p>
+    
     <script>
         function validarFormulario(event) {
             var nombre = document.getElementById("nombre").value;
@@ -52,13 +50,24 @@
 
             // Validación de fecha de nacimiento
             if (fechaN !== "") {
-                var fechaNacimiento = new Date(fechaN);
+                var fechaRegex = /^\d{1,2}-\d{1,2}-\d{4}$/;
+                if (fechaRegex.test(fechaN)) {
+                    alert("Por favor, introduzca la fecha de nacimiento en el formato DD-MM-YYYY.");
+                    return false;
+                }
+            }
+                var partesFecha = fechaN.split('-');
+                var dia = parseInt(partesFecha[0], 10);
+                var mes = parseInt(partesFecha[1], 10);
+                var año = parseInt(partesFecha[2], 10);
+
+                // Validar la fecha
+                var fechaNacimiento = new Date(año, mes - 1, dia);
                 var fechaActual = new Date();
                 if (fechaNacimiento >= fechaActual) {
                     alert("La fecha de nacimiento debe ser anterior a la fecha actual.");
                     return false;
                 }
-            }
             return true;
         }
     </script>
