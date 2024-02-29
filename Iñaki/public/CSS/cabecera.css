@@ -51,15 +51,4 @@ li p {
     margin-top: 2.5%;
 }
 
-#resultado_busqueda {
-    position: absolute;
-    background-color: white;
-    width: 100%;
-    z-index: 1;
-    display: none;
-}
 
-#buscador-container {
-    float: right;
-    margin-right: 2%;
-}
