@@ -23,15 +23,10 @@
 </header>
 
 <script>
-    // Función para buscar y filtrar usuarios
     function filtrarUsuarios() {
         var busqueda = document.getElementById("buscador").value.trim().toLowerCase();
         var perfilesDiv = document.getElementById("perfiles");
-
-        // Obtener todos los perfiles
         var perfiles = perfilesDiv.querySelectorAll(".usuario");
-
-        // Mostrar u ocultar los perfiles según la búsqueda
         perfiles.forEach(function(perfil) {
             var nombreUsuario = perfil.querySelector("h3").textContent.toLowerCase();
             var correoUsuario = perfil.querySelector("p:nth-of-type(1)").textContent.toLowerCase();
@@ -40,10 +35,7 @@
             if (busqueda === '') {
                 perfil.style.display = "block";
             } else {
-                // Crear una expresión regular para buscar coincidencias parciales en la búsqueda
                 var regex = new RegExp(busqueda, 'i');
-
-                // Mostrar el perfil si hay una coincidencia parcial en el nombre de usuario o correo electrónico
                 if (nombreUsuario.match(regex) || correoUsuario.match(regex)) {
                     perfil.style.display = "block";
                 } else {
@@ -52,8 +44,6 @@
             }
         });
     }
-
-    // Añadir un evento de escucha al campo de búsqueda para ejecutar filtrarUsuarios() al presionar "Enter"
     document.getElementById("buscador").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             filtrarUsuarios();
