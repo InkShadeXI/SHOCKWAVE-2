@@ -47,23 +47,16 @@ INSERT INTO `usuario` (`IdUsuario`, `NombreUsuario`, `CorreoUsuario`, `Contrasen
 (1, 'Jaraba', 'jaraba@gmail.com', '1234', 1, NULL, NULL, NULL),
 (2, 'usuario1', 'sus1@gmail.com', '1234', 0, NULL, NULL, NULL),
 (3, 'usuario2', 'usu2@gmail.com', '1234', 0, NULL, NULL, NULL),
-(4, 'usuario3', 'sus3@gmail.com', '1234', 0, NULL, NULL, NULL),
-(5, 'usuario4', 'usu4@gmail.com', '1234', 0, NULL, NULL, NULL),
+(33, 'Joseph', 'josephqueen@gmail.com', '1234', 0, Londres, 'Chrissy wake up', NULL),
 (6, 'juan', 'hola1234@gmail.com', '12345678', 0, 'Tielmes Country', 'hola muy buenas a todos', '2004-06-03'),
 (8, 'manolo', 'manolo@gmail.com', '12345678', 0, 'Toledo', 'De toledo', '1986-05-21'),
 (9, 'fran', 'fran@gmail.com', '$2y$10$Vp.0yJUE.L4WmTnOgvpsr.TtbLHm6TlKBxf32aVgLzzxqUCD6hn7O', 1, 'Getafe', 'Dando guerra desde 2008', '2008-07-13'),
-(36, 'Trump', 'trump@gmail.com', '$2y$10$Vp.0yJUE.L4WmTnOgvpsr.TtbLHm6TlKBxf32aVgLzzxqUCD6hn7O', 0, 'LOS GRANDES ESTADOS UNIDOS', 'Make America Great Again', '1946-06-14'),
 (38, 'ald', 'ald@gmail.com', '$2y$10$1irr1ZEDQqM4n4xUZ8ttq.GV28uIC7phh4LGzXndIk/0buj6f5Fti', 0, 'narnia', 'a', '2004-11-13');
 
 INSERT INTO `amistad` (`IdAmistad`, `IdUsuario1`, `IdUsuario2`, `Estado`) VALUES
 (1, 2, 1, 'aceptada'),
-(11, 4, 3, 'pendiente'),
-(12, 2, 4, 'aceptada'),
-(13, 1, 4, 'pendiente'),
-(15, 5, 4, 'pendiente'),
 (16, 9, 3, 'pendiente'),
 (17, 9, 1, 'pendiente'),
-(18, 1, NULL, 'pendiente'),
 (20, 38, 9, 'aceptada');
 
 INSERT INTO PostUsuario (IdUsuarioPost, TextoPost, ExisteFoto, TituloFoto, NumLikes, NumDislikes, FechaCreacion) VALUES
@@ -75,7 +68,6 @@ INSERT INTO Comentario (IdComentarioPost, IdComentarioUsuario, TextoComentario) 
 (1, 2, '¡Qué buen post!'),
 (1, 3, 'Interesante'),
 (2, 1, 'Me gusta la imagen'),
-(2, 4, '¿Dónde fue tomada la foto?');
 
 DELIMITER //
 CREATE TRIGGER before_insert_Usuario
