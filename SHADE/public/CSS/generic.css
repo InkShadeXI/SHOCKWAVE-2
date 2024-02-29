@@ -39,3 +39,9 @@ h2, p {
     width: 25px;
     height: 25px;
 }
+
+@media (max-width: 852px) {
+    div {
+        width: 80%;
+    }
+}
