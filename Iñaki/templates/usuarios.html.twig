@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{ asset('CSS/usuarios.css') }}">
-
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
 {% include 'includes/cabecera.html.twig' %}
     <div class="separador-cabecera"></div>
         <div id="perfiles">
@@ -13,3 +13,21 @@
                 </a>
             {% endfor %}
         </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{# <script>
+    $(document).ready(function() {
+        $('#buscadorFinal').on('input', function() {
+            var query = $(this).val();
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ path('buscar_usuarios', '{'valorBusqueda': query }') }}',
+                data: { q: query },
+                success: function(response) {
+                    $('#perfiles').html(response);
+                }
+            });
+        });
+    });
+</script> #}
