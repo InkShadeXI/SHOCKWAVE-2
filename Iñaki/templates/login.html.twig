@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="{{ asset('CSS/login.css') }}">
 </head>
-<body>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
     <button><img src="{{ asset('IMG/night.png') }}"></button>
-    <div>
+    <div id="contenedor">
     <h1>¡Bienvenido a Shockwave!</h1>
         <form action="{{ path('procesar_login') }}" method="post">
-        <table>
             <tr>
                 <td><p>Usuario:</p></td>
                 <td><input type="text" name="_username"/></td>
@@ -21,32 +20,36 @@
                 <td><input type="password" name="_password"/><br></td>
             </tr>
             <tr>
-                <td><input type="submit" class="button"/></td>
+                <td colspan="3"><input type="submit" class="button" id="login"/></td>
             </tr>
-        </table>
         </form>
         <form action="{{path('registro')}}">
-            <input type="submit" name="registro" class="button" value="Registrarse">
-        </form>
+            <input type="submit" name="registro" class="button" value="Registrarse" id="registrarse">
+        </form></br>
+        <a href="{{path('correo_contraseña')}}">Recuperar contraseña</a>
     </div>
     <script src = "{{ asset('JS/jquery.js') }}"></script>
     <script>
         $(document).ready(function () {
             var color = "black";
+            var backgroundImageUrl = "{{ asset('ruta/de/la/imagen.jpg') }}";
             $("button").click(function () {
                 if (color == "black") {
                     color = "white";
+                    $("body").css("background-image","none");
                     $("body").css("background-color", color);
                     $("h1").css("color", "black");
                     $("p").css("color", "black");
                     $("div").css("border-color", "black");
+                    $("#contenedor").css("background-color","white");
                     $(".button").css("border-color", "black");
                 } else {
                     color = "black";
-                    $("body").css("background-color", color);
+                    $("body").css("background-image","url('{{ asset('IMG/fondo.jpg') }}')");
                     $("h1").css("color", "white");
                     $("p").css("color", "white");
                     $("div").css("border-color", "white");
+                    $("#contenedor").css("background-color","#1a1a1a");
                     $(".button").css("border-color", "white");
                 }
             });
