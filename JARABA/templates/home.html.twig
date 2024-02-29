@@ -1,5 +1,5 @@
 {# templates/home.html.twig #}
-{% include 'cabecera.html.twig' %}
+{% include 'includes/cabecera.html.twig' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,19 +24,19 @@
             <p name="contenido">{{ post['texto_post'] }}</p><br><br>
             <input type="submit" class="button" value="comentar"></input>
         </form>
-        <!-- Reacciones (like/disslike) -->
         <form action="{{ path('procesar_reaccion')}}" method="post">
-            <!-- Campo oculto para almacenar el valor del h2 -->
-            <input type="hidden" name="usuario" value="{{ post['id'] }}">
-            <button class="reaction like" type="submit"><img src="{{ asset('IMG/like.png') }}" class="simple_img"></button>
-            <p class="texto_like">{{ post['num_likes']}}</p>
-        </form>
-        <form action="{{ path('procesar_reaccion')}}" method="post">
-            <!-- Campo oculto para almacenar el valor del h2 -->
-            <input type="hidden" name="usuario" value="{{ post['id'] }}">
-            <button class="reaction disslike" type="submit"><img src="{{ asset('IMG/dislike.png') }}" class="simple_img"></button>
-            <p class="texto_disslike">{{ post['num_dislikes']}}</p>
-        </form>
+    <input type="hidden" name="id_post" value="{{ post['id'] }}">
+    <button class="reaction like" type="submit" name="like"><img src="{{ asset('IMG/like.png') }}" class="simple_img"></button>
+    <p class="texto_like">{{ post['num_likes']}}</p>
+        <input type="hidden" name="like" value="{{ post['num_likes']}}">
+</form>
+<form action="{{ path('procesar_reaccion')}}" method="post">
+    <input type="hidden" name="id_post" value="{{ post['id'] }}">
+    <button class="reaction dislike" type="submit" name="dislike"><img src="{{ asset('IMG/dislike.png') }}" class="simple_img"></button>
+    <p class="texto_dislike" name="dislike">{{ post['num_dislikes']}}</p>
+            <input type="hidden" name="dislike" value="{{ post['num_dislikes']}}">
+
+</form>
     </div>
     {% endfor %} 
     <script src = "{{ asset('JS/jquery.js') }}"></script>
