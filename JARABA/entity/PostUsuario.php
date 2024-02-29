@@ -13,13 +13,10 @@ class PostUsuario
     private $id;
 
 	#[ORM\Column(type:'integer', name:'IdUsuarioPost')]
-    private $id_post_usuario;
+    private $id_usuario_post;
 
 	#[ORM\Column(type:'string', name:'TextoPost')]
     private $texto_post;
-
-	#[ORM\Column(type:'integer', name:'ExisteFoto')]
-    private $existe_foto;
 
 	#[ORM\Column(type:'string', name:'TituloFoto')]
     private $titulo_foto;
@@ -33,10 +30,13 @@ class PostUsuario
 	#[ORM\Column(type:'integer', name:'NumDislikes')]
     private $num_dislikes;
 
-    #[ORM\ManyToOne(targetEntity: 'Usuario', inversedBy: 'postusuario')]
-    #[ORM\JoinColumn(name: 'IdUsuarioPost', referencedColumnName: 'IdUsuario')]
-    private $usuario;
+    #[ORM\Column(type:'integer', name:'Usuarioid')]
+    private $usuarioid;
 
+    #[ORM\ManyToOne(targetEntity: 'Usuario', inversedBy: 'postusuario')]
+    #[ORM\JoinColumn(name: 'Usuarioid', referencedColumnName: 'IdUsuario')]
+    private $usuario;
+    
     #[ORM\OneToMany(targetEntity:'Comentario', mappedBy:'post_usuario')]
     private $cementarios;
 
@@ -49,11 +49,11 @@ class PostUsuario
     }
 
     public function getIdUsuarioPost(){
-        return $this->id_post_usuario;
+        return $this->id_usuario_post;
      }
  
-     public function setIdUsuarioPost($id_post_usuario){
-         $this->id_post_usuario = $id_post_usuario;
+     public function setIdUsuarioPost($id_usuario_post){
+         $this->id_usuario_post = $id_usuario_post;
      }
 
      public function getTextoPost(){
@@ -62,14 +62,6 @@ class PostUsuario
  
      public function setTextoPost($texto_post){
          $this->texto_post = $texto_post;
-     }
-
-     public function getExisteFoto(){
-        return $this->existe_foto;
-     }
- 
-     public function setExisteFoto($existe_foto){
-         $this->existe_foto = $existe_foto;
      }
 
      public function getTituloFoto(){
@@ -102,6 +94,14 @@ class PostUsuario
  
      public function setNumDislikes($num_dislikes){
          $this->num_dislikes = $num_dislikes;
+     }
+
+     public function getUsuarioId(){
+        return $this->usuarioid;
+     }
+ 
+     public function setUsuarioid($usuarioid){
+         $this->usuarioid = $usuarioid;
      }
 
      public function getUsuario(){
