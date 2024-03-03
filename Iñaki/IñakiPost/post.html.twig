@@ -1,0 +1,18 @@
+{% include 'includes/cabecera.html.twig' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>post</title>
+    <link rel="stylesheet" href="{{ asset('CSS/crear_post.css') }}">
+</head>
+<body style="background-image: url('{{ asset('IMG/fondo.jpg') }}')">
+    <div id="contenedorCreador">
+        <form>
+            <textarea rows="4" cols="50" name="post" id='post'></textarea>
+            <input type="submit" value="Publicar" id="submit" class="boton">
+        </form>
+    </div>
+</body>
+</html>
