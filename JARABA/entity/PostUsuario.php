@@ -30,15 +30,12 @@ class PostUsuario
 	#[ORM\Column(type:'integer', name:'NumDislikes')]
     private $num_dislikes;
 
-    #[ORM\Column(type:'integer', name:'Usuarioid')]
-    private $usuarioid;
-
     #[ORM\ManyToOne(targetEntity: 'Usuario', inversedBy: 'postusuario')]
-    #[ORM\JoinColumn(name: 'Usuarioid', referencedColumnName: 'IdUsuario')]
+    #[ORM\JoinColumn(name: 'IdUsuarioPost', referencedColumnName: 'IdUsuario')]
     private $usuario;
     
     #[ORM\OneToMany(targetEntity:'Comentario', mappedBy:'post_usuario')]
-    private $cementarios;
+    private $comentarios;
 
     public function getIdPost(){
        return $this->id;
@@ -96,24 +93,43 @@ class PostUsuario
          $this->num_dislikes = $num_dislikes;
      }
 
-     public function getUsuarioId(){
-        return $this->usuarioid;
-     }
- 
-     public function setUsuarioid($usuarioid){
-         $this->usuarioid = $usuarioid;
-     }
-
      public function getUsuario(){
         return $this->usuario;
      }
 
+     public function setUsuario($usuario){
+        $this->usuario = $usuario;
+    }
+
      public function getComentario(){
-        return $this->cementarios;
+        return $this->comentarios;
      }
  
-     public function setComentario($cementarios){
-         $this->cementarios = $cementarios;
+     public function setComentario($comentarios){
+         $this->comentarios = $comentarios;
      }
+
+     public function addComentario(Comentario $comentario): self
+     {
+         if (!$this->comentarios->contains($comentario)) {
+             $this->comentarios[] = $comentario;
+             $comentario->setPostComentario($this);
+         }
+ 
+         return $this;
+     }
+ 
+     public function removeComentario(Comentario $comentario): self
+     {
+         if ($this->comentarios->removeElement($comentario)) {
+             // set the owning side to null (unless already changed)
+             if ($comentario->getPostComentario() === $this) {
+                 $comentario->setPostComentario(null);
+             }
+         }
+ 
+         return $this;
+     }
+ 
     
 }
