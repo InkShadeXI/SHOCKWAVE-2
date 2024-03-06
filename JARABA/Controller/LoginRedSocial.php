@@ -50,9 +50,10 @@ class LoginRedSocial extends AbstractController
     }
 	
 	#[Route('/logout', name:'app_logout')]
-    public function logout(){    
-        return $this->render('login.html.twig');
-    }    
+    public function logout()
+    {
+        return null;
+    }     
 
     #[Route('/usuario', name:'usuario')]
     public function mostrarUsuario(EntityManagerInterface $entityManager) {
@@ -104,35 +105,45 @@ class LoginRedSocial extends AbstractController
 #[Route('/confirmar_correo/{n}/{c}/{p}/{l}/{f}/{d}', name: 'confirmar_correo')]
 public function confirmar_correo(Request $request, EntityManagerInterface $entityManager, $n, $c, $p, $l, string $f, $d)
 {
-    $admin = 0;
 
-    $nuevo = new Usuario();
+    $Correosexistentes = $entityManager->getRepository(Usuario::class)->findOneBy(['correo_usuario' => $c]);
 
-    $nuevo->setNombreUsuario($n);
-    $nuevo->setUsuarioAdmin($admin);
-    $nuevo->setCorreoUsuario($c);
-    $nuevo->setContraseñaUsuario(password_hash($p, PASSWORD_BCRYPT)); 
-    if ($d == null) {
-        $nuevo->setDescripcion(" ");
-    } else {
-        $nuevo->setDescripcion($d);
-    }
-    $nuevo->setLocalidad($l);
+
+    if(!$Correosexistentes){
+        $admin = 0;
+
+        $nuevo = new Usuario();
     
-    try {
-        $fechaNacimiento = \DateTime::createFromFormat('Y-m-d', $f);
-
-        $fechaNacimientoStr = $fechaNacimiento->format('Y-m-d');
-
-        $nuevo->setFechaNacimiento($fechaNacimientoStr);
-    } catch (\Exception $e) {
-        echo "Error al procesar la fecha de nacimiento: " . $e->getMessage();
+        $nuevo->setNombreUsuario($n);
+        $nuevo->setUsuarioAdmin($admin);
+        $nuevo->setCorreoUsuario($c);
+        $nuevo->setContraseñaUsuario(password_hash($p, PASSWORD_BCRYPT)); 
+        if ($d == null) {
+            $nuevo->setDescripcion(" ");
+        } else {
+            $nuevo->setDescripcion($d);
+        }
+        $nuevo->setLocalidad($l);
+        
+        try {
+            $fechaNacimiento = \DateTime::createFromFormat('Y-m-d', $f);
+    
+            $fechaNacimientoStr = $fechaNacimiento->format('Y-m-d');
+    
+            $nuevo->setFechaNacimiento($fechaNacimientoStr);
+        } catch (\Exception $e) {
+            echo "Error al procesar la fecha de nacimiento: " . $e->getMessage();
+        }
+    
+        $entityManager->persist($nuevo);
+        $entityManager->flush();
+    
+        return $this->redirectToRoute('log');
+    }else{
+        return $this->redirectToRoute('log');
     }
+ }
 
-    $entityManager->persist($nuevo);
-    $entityManager->flush();
-
-    return $this->redirectToRoute('log');}
 
     #[Route('/correo_contraseña', name: 'correo_contraseña')]
 public function correoContraseña(MailerInterface $mailer, Request $request): Response 
