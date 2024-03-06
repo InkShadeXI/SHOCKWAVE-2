@@ -298,36 +298,40 @@ public function comentar(Request $request, EntityManagerInterface $entityManager
             }
         }
 
-        #[Route('/procesar_reaccion', name:'procesar_reaccion')]
+        #[Route('/procesar_reaccion', name: 'procesar_reaccion')]
         public function reaccion(Request $request, EntityManagerInterface $entityManager): Response
         {
             $id_post = $request->request->get("id_post");
-            $post = $entityManager->getRepository(PostUsuario::class)->find(['id' => $id_post]);
-        
+            $post = $entityManager->getRepository(PostUsuario::class)->find($id_post);
+    
             if (!$post) {
                 throw $this->createNotFoundException('No se encontró el post con el ID: '.$id_post);
             }
-        
-                $like = $request->request->get("like");
-                $dislike = $request->request->get("dislike");
-        
-                if ($like) {
-                    $post->setNumLikes($post->getNumLikes() + 1);
-                    $entityManager->flush();
-                    return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
-                } elseif ($dislike) {
-                    $post->setNumDislikes($post->getNumDislikes() + 1);
-                    $entityManager->flush();
-                    return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
-                }
-            
-                return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
+    
+            $like = $request->request->get("like");
+            $dislike = $request->request->get("dislike");
+    
+            if ($like) {
+                $post->setNumLikes($post->getNumLikes() + 1);
+            } elseif ($dislike) {
+                $post->setNumDislikes($post->getNumDislikes() + 1);
+            }
+    
+            if ($post->getNumLikes() == 0) {
+                $post->setNumLikes(1);
+            }
+            if ($post->getNumDislikes() == 0) {
+                $post->setNumDislikes(1);
+            }
+    
+            $entityManager->flush();
+    
+            return $this->redirectToRoute('home');
         }
     
         #[Route('/procesar_comentario', name:'procesar_comentario')]
         public function addComentario(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Obtener el ID del post del comentario desde la solicitud
         $idPost = $request->request->get('id_post');
         
         // Obtener el texto del comentario desde la solicitud
