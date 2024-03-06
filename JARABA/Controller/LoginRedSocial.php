@@ -52,7 +52,7 @@ class LoginRedSocial extends AbstractController
 	#[Route('/logout', name:'app_logout')]
     public function logout()
     {
-        return null;
+        return $this->render('login.html.twig');
     }     
 
     #[Route('/usuario', name:'usuario')]
@@ -99,7 +99,7 @@ class LoginRedSocial extends AbstractController
             return $this->render('registro.html.twig');
         }
     
-        return $this->render('login.html.twig');
+        return $this->redirectToRoute('login');
     }
 
 #[Route('/confirmar_correo/{n}/{c}/{p}/{l}/{f}/{d}', name: 'confirmar_correo')]
@@ -164,7 +164,7 @@ public function correoContraseña(MailerInterface $mailer, Request $request): Re
         return $this->render('correo_contrasena.html.twig');
     }
     
-    return $this->render('login.html.twig');
+    return $this->redirectToRoute('log');
 }
 
 #[Route('/recuperar_contraseña/{correo}', name: 'recuperar_contraseña')]
