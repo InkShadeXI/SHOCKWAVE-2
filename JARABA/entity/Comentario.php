@@ -22,7 +22,7 @@ class Comentario
     private $texto_comentario;
 
     #[ORM\ManyToOne(targetEntity:"Usuario", inversedBy:'comentario')]
-    #[ORM\JoinColumn(name:"IdComentario", referencedColumnName:"IdUsuario")]
+    #[ORM\JoinColumn(name:"IdComentarioUsuario", referencedColumnName:"IdUsuario")]
     private $usuario_comentario; 
 
     #[ORM\ManyToOne(targetEntity:"PostUsuario", inversedBy:'comentario')]
@@ -68,8 +68,15 @@ class Comentario
         return $this->post_comentario;
      }
 
+     public function setPostUsuario($post_comentario){
+         $this->post_comentario = $post_comentario;
+     }
+
      public function getUsuario(){
         return $this->usuario_comentario;
+     }
+     public function setUsuario($usuario_comentario){
+         $this->usuario_comentario = $usuario_comentario;
      }
  
 }
