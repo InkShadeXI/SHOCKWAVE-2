@@ -48,6 +48,8 @@ private $postsUsuario;
 
     public function __construct()
     {
+        $this->postsUsuario = new ArrayCollection();
+        $this->comentarios = new ArrayCollection();
        $this->amistades = new ArrayCollection();
     }
 
@@ -190,5 +192,49 @@ private $postsUsuario;
     public function eraseCredentials(): void
     {
         // No es necesario hacer nada aquí, pero el método debe ser implementado
+    }
+
+    public function addPost(PostUsuario $post): self
+    {
+        if (!$this->postsUsuario->contains($post)) {
+            $this->postsUsuario[] = $post;
+            $post->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(PostUsuario $post): self
+    {
+        if ($this->postsUsuario->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getUsuario() === $this) {
+                $post->setUsuario(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addComentario(Comentario $comentario): self
+    {
+        if (!$this->comentarios->contains($comentario)) {
+            $this->comentarios[] = $comentario;
+            $comentario->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComentario(Comentario $comentario): self
+    {
+        if ($this->comentarios->removeElement($comentario)) {
+            // set the owning side to null (unless already changed)
+            if ($comentario->getUsuario() === $this) {
+                $comentario->setUsuario(null);
+            }
+        }
+
+        return $this;
     }
 }
