@@ -430,7 +430,7 @@ public function process(Request $request, EntityManagerInterface $entityManager)
             return $this->render('registro.html.twig');
         }
     
-        return $this->render('login.html.twig');
+        return $this->redirectToRoute('login');
     }
 
 
@@ -446,12 +446,12 @@ public function process(Request $request, EntityManagerInterface $entityManager)
                     $entityManager->flush();
                 }
                 
-                return $this->redirectToRoute('ctrl_logout');
+                return $this->redirectToRoute('logout');
             } else {
-                return $this->redirectToRoute('ctrl_logout');
+                return $this->redirectToRoute('logout');
             }
         } catch (\Exception $e) {
-            return $this->redirectToRoute('ctrl_logout');
+            return $this->redirectToRoute('logout');
         }
     }
 
