@@ -82,7 +82,7 @@ class BaseRedSocial extends AbstractController
     $entityManager->persist($solicitud);
     $entityManager->flush();
 
-    return $this->render('home.html.twig');
+    return $this->redirectToRoute('home');
 }
 
     #[Route('/aceptar_solicitud/{id}', name: 'aceptar_solicitud_amistad')]
@@ -255,19 +255,19 @@ public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $
     return $this->render('usuarios.html.twig', ['usuario' => $usuarios]);
 }
       
-        #[Route('/comentar_post', name:'comentar_post')]
-        public function comentar(Request $request, EntityManagerInterface $entityManager): Response {
-            $usuarioReceptor = $request->request->get("usuario");
-            $idPost = $request->request->get("id_post");
-            $comentarios = $entityManager->getRepository(Comentario::class)
-                ->findBy(['id_comentario_post' => $idPost]);
-            
-            return $this->render('comentario.html.twig', [
-                "usuario_receptor" => $usuarioReceptor,
-                "id_post" => $idPost,
-                "comentarios" => $comentarios
-            ]);
-        }
+#[Route('/comentar_post', name:'comentar_post')]
+public function comentar(Request $request, EntityManagerInterface $entityManager): Response {
+    $usuarioReceptor = $request->request->get("usuario");
+    $idPost = intval($request->request->get("id_post"));
+    $comentarios = $entityManager->getRepository(Comentario::class)
+        ->findBy(['id_comentario_post' => $idPost]);
+    
+    return $this->render('comentario.html.twig', [
+        "usuario_receptor" => $usuarioReceptor,
+        "id_post" => $idPost,
+        "comentarios" => $comentarios  // Asegúrate de pasar los comentarios a la plantilla Twig
+    ]);
+}
 
         #[Route('/crear_post', name:'crear_post')]
         public function crear_post(Request $request, EntityManagerInterface $entityManager): Response {
@@ -275,15 +275,17 @@ public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $
                 $titulo = $request->request->get("TituloFoto");
                 $texto = $request->request->get("TextoPost");
                 $idUsuario =$request->request->get("id"); // Obtener el ID del usuario
-                $usuario = $entityManager->getRepository(Usuario::class)
-                ->findOneBy(['id_usuario' => $idUsuario]);
+                $usuario = $this->getUser();
                 $fechaCreacion = new DateTime();
 
                 $post = new PostUsuario();
-                $post->setIdUsuarioPost($usuario->getIdUsuario());  // Establecer el ID del usuario en el post
                 $post->setTituloFoto($titulo);
                 $post->setTextoPost($texto);
+                $post->setNumLikes(0);
+                $post->setNumDislikes(0);
                 $post->setFechaCreacion($fechaCreacion);
+                $post->setUsuario($usuario); // Asignar el objeto de usuario al comentario
+
             
                 // Persistir el post en la base de datos
                 $entityManager->persist($post);
@@ -319,83 +321,87 @@ public function mostrarUsuarios(EntityManagerInterface $entityManager, Request $
                     return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
                 }
             
-            return $this->render('home.html.twig'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
+                return $this->redirectToRoute('home'); // Reemplaza 'ruta_de_vuelta' por la ruta a la que deseas redirigir después de procesar la reacción.
         }
     
         #[Route('/procesar_comentario', name:'procesar_comentario')]
-        public function procesar_comentario (Request $request, EntityManagerInterface $entityManager): Response {
-            $id_post = $request->request->get("id_post");
-            $id_usuario_comentario = $this->getUser()->getIdUsuario();
-            $comentario_usuario = $request->request->get("comentario");
-    
-            // Crear una nueva instancia de Comentario (AQUI ESTA EL ERROR, MIRALO)
-            $comentario = new Comentario();
-            $comentario->setIdComentarioPost(2);
-            $comentario->setIdComentarioUsuario($id_usuario_comentario);
-            $comentario->setTextoComentario($comentario_usuario);
-    
-            // Persistir el comentario en la base de datos
-            $entityManager->persist($comentario);
-            $entityManager->flush();
-    
-            return $this->render('home.html.twig');
-        }
+        public function addComentario(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Obtener el ID del post del comentario desde la solicitud
+        $idPost = $request->request->get('id_post');
+        
+        // Obtener el texto del comentario desde la solicitud
+        $textoComentario = $request->request->get('comentario');
+
+        // Obtener el usuario actual
+        $usuario = $this->getUser();
+
+        // Crear una nueva instancia de Comentario
+        $comentario = new Comentario();
+        $comentario->setIdComentarioPost($idPost);
+        $comentario->setTextoComentario($textoComentario);
+        $comentario->setUsuario($usuario); // Asignar el objeto de usuario al comentario
+
+        // Persistir el comentario en la base de datos
+        $entityManager->persist($comentario);
+        $entityManager->flush();
+
+        // Redireccionar a la página de inicio u otra página después de agregar el comentario
+        return $this->redirectToRoute('home');
+    }
 
 
 // home
+#[Route('/home', name: 'home')]
+public function process(Request $request, EntityManagerInterface $entityManager): Response
+{
+    // Asegurarse de que el usuario esté completamente autenticado
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-#[Route('/home', name:'home')]
-public function process(Request $request, EntityManagerInterface $entityManager): Response {
-$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    // Obtener el usuario actualmente autenticado
+    $usuario = $this->getUser();
 
-// Obtén el usuario actualmente autenticado
-$usuario = $this->getUser();
+    // Verificar si el usuario está autenticado
+    if ($usuario) {
+        // Obtener el ID del usuario actual
+        $idUsuario = $usuario->getIdUsuario();
 
-// Dentro de tu controlador
-dump($usuario);
+        // Obtener los IDs de los amigos del usuario
+        $idsAmigos = $entityManager->createQueryBuilder()
+            ->select('CASE WHEN a.usuario1 = :idUsuario THEN IDENTITY(a.usuario2) ELSE IDENTITY(a.usuario1) END AS idAmigo')
+            ->from(Amistad::class, 'a')
+            ->andWhere('a.estado = :estado')
+            ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
+            ->setParameter('estado', 'aceptada')
+            ->setParameter('idUsuario', $idUsuario)
+            ->getQuery()
+            ->getResult();
 
-// Verifica si el usuario está autenticado
-if ($usuario) {
-    // Obtén el ID del usuario actual
-    $idUsuario = $usuario->getIdUsuario();
-    $nombreUsuario = $usuario->getNombreUsuario();
+        // Transformar los resultados en un array plano de IDs
+        $idsAmigos = array_column($idsAmigos, 'idAmigo');
 
-    // Obtener los ids de los amigos (FUNCIONA)
-    $idsAmigos = $entityManager->createQueryBuilder()
-    ->select('CASE WHEN a.usuario1 = :idUsuario THEN IDENTITY(a.usuario2) ELSE IDENTITY(a.usuario1) END AS idAmigo')
-    ->from(Amistad::class, 'a')
-    ->andWhere('a.estado = :estado') // Aquí usa el nombre correcto de la columna 'Estado'
-    ->andWhere('a.usuario1 = :idUsuario OR a.usuario2 = :idUsuario')
-    ->setParameter('estado', 'Aceptado') // Aquí también usa el nombre correcto de la columna 'Estado'
-    ->setParameter('idUsuario', $idUsuario)
-    ->getQuery()
-    ->getResult();
+        // Agregar el ID del usuario actual para incluirlo en los posts
+        $idsAmigos[] = $idUsuario;
 
-    // Transforma los resultados en un array plano de IDs
-    $idsAmigos = array_column($idsAmigos, 'idAmigo');
+        // Obtener los posts de los usuarios amigos
+        $postsAmigos = $entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(PostUsuario::class, 'p')
+            ->join('p.usuario', 'u')
+            ->where('u.id_usuario IN (:idsAmigos)')
+            ->setParameter('idsAmigos', $idsAmigos)
+            ->orderBy('p.fecha_creacion', 'DESC')
+            ->getQuery()
+            ->getResult();
 
-    // Añade el ID del usuario actual para incluir también su propio ID
-    $idsAmigos[] = $idUsuario;
+        // Renderizar los posts en una vista
+        return $this->render('home.html.twig', [
+            'postsAmigos' => $postsAmigos
+        ]);
+    }
 
-    // Obtén los posts de los usuarios amigos
-    $postsAmigos = $entityManager->createQueryBuilder()
-    ->select('p.id, u.nombre_usuario, p.texto_post, p.num_likes, p.num_dislikes')
-    ->from(PostUsuario::class, 'p')
-    ->join('p.usuario', 'u')  // Une con la entidad Usuario
-    ->andWhere('p.usuario IN (:idsAmigos)')
-    ->setParameter('idsAmigos', $idsAmigos)
-    ->getQuery()
-    ->getResult();
-
-    return $this->render('home.html.twig', [
-        'idUsuario' => $idUsuario,
-        'nombreUsuario' => $nombreUsuario,
-        'postsAmigos' => $postsAmigos
-    ]);
-} 
-else {
-    throw $this->createAccessDeniedException('No estás autenticado.');
-}
+    // Si no se encuentra ningún usuario autenticado, redirigir a la página de inicio de sesión
+    return $this->redirectToRoute('login');
 }
 
 // codigo de borrar el correo
